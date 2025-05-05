@@ -36,3 +36,8 @@ CREATE TABLE Comentarios (
   FOREIGN KEY (usuario_id) REFERENCES Usuarios(id),
   FOREIGN KEY (denuncia_id) REFERENCES Denuncias(id)
 )
+
+-- // Validar
+CREATE INDEX idx_denuncias_localizacao ON Denuncias (latitude, longitude)
+CREATE INDEX idx_votos_denuncia ON Votos (denuncia_id)
+CREATE INDEX idx_comentarios_denuncia Comentarios (denuncia_id)
