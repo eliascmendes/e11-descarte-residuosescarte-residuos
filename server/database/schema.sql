@@ -5,3 +5,15 @@ CREATE TABLE Usuarios (
   senha VARCHAR(255) NOT NULL,
   tipo ENUM('morador', 'administrador') NOT NULL
 )
+
+CREATE TABLE Denuncias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  latitude DECIMAL(10, 8) NOT NULL,
+  longitude DECIMAL(11, 8) NOT NULL,
+  descricao TEXT NOT NULL,
+  foto_url VARCHAR(255),
+  status ENUM('pendente', 'em andamento', 'resolvido') DEFAULT 'pendente',
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
+)
