@@ -17,3 +17,12 @@ CREATE TABLE Denuncias (
   data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
 )
+
+CREATE TABLE Votos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  denuncia_id INT NOT NULL,
+  data_voto TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
+  FOREIGN KEY (denuncia_id) REFERENCES Denuncias(id)
+)
