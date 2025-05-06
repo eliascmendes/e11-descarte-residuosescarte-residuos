@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    scroll-behavior: smooth;
+}
+body{
+    display: flex;
+    flex-direction: column;
+}
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "Inter", sans-serif;
+    padding: 20px;
+    background-color: #fff;
+}
+nav a{
+    text-decoration: none;
+    margin-left: 3rem;
+    cursor: pointer;
+    color: #374151;
+}
+#nome_projeto{
+    font-weight: bolder;
+    color: #000;
+}
+#entrar{
+    all: unset;
+    margin-left: 3rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: "Inter", sans-serif;
+    background-color: #fff;
+    border: 1px solid #22C55E;
+    border-radius: 5px;
+    color: #22C55E;
+}
+/*É importante lembrar que cada tela  deve ter um width e height para a navegação funcionar*/
+#tela1{
+    width: 100vw;
+    height: 100vh;
+    background-color: #F0FDF4;
+}
+.conteudo_esquerdo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    padding: 2rem;
+}
+.conteudo_esquerdo h1{
+    width: 400px;
+    font-size: 28px;
+    font-family: "Inter", sans-serif;
+    margin-top: 2.5rem;
+    color: #111827;
+}
+.conteudo_esquerdo p{
+    width: 400px;
+    font-family: "Inter", sans-serif;
+    line-height: 1.8;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    color: #374151;
+    font-size: 16px;
+}
+.conteudo_esquerdo button{
+    all: unset;
+    padding: 15px 40px;
+    border-radius: 5px;
+    background-color: #22C55E;
+    font-family: "Inter", sans-serif;
+    color: #fff;
+    cursor: pointer;
+}
