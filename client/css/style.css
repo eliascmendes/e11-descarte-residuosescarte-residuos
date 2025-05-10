@@ -36,6 +36,7 @@ nav a {
 .opcoes_nav {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 #nome_projeto {
   font-weight: bolder;
@@ -57,6 +58,8 @@ nav a {
   width: 100vw;
   height: 100vh;
   background-color: #f0fdf4;
+  background: #F0FDF4;
+  background: linear-gradient(145deg, rgba(240, 253, 244, 1) 0%, rgba(239, 246, 255, 1) 100%);
 }
 
 .conteudo_esquerdo {
@@ -65,6 +68,7 @@ nav a {
   align-items: center;
   width: 50%;
   padding: 2rem;
+  margin: 2.5rem 0;
 }
 
 .conteudo_esquerdo h1 {
@@ -143,6 +147,8 @@ nav a {
 
 .secao-branca {
   background-color: white;
+  background: #F0FDF4;
+  background: linear-gradient(145deg, rgba(240, 253, 244, 1) 0%, rgba(239, 246, 255, 1) 100%);
   padding: 48px 0;
   margin-top: 48px;
   padding-bottom: 48px;
@@ -157,6 +163,9 @@ nav a {
   background-color: #f0fdf4;
 }
 
+  background: #F0FDF4;
+  background: linear-gradient(145deg, rgba(240, 253, 244, 1) 0%, rgba(239, 246, 255, 1) 100%);
+}
 .cadastro-container {
   display: flex;
   max-width: 1200px;
@@ -285,4 +294,60 @@ nav a {
   color: #22c55e;
   text-decoration: none;
   margin-left: 0.25rem;
+}
+
+/*Nossa equipe*/
+#tela5{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#tela5 h1{
+  margin-top: 60px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+.equipe{
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 50px;
+}
+.desenvolvedor{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  width: 350px;
+  padding: 20px;
+  box-shadow: 1px 6px 5px 0px rgba(75,85,99,0.51);
+-webkit-box-shadow: 1px 6px 5px 0px rgba(75,85,99,0.51);
+-moz-box-shadow: 1px 6px 5px 0px rgba(75,85,99,0.51);
+
+}
+.icone_desenvolvedor{
+  width: 50px;
+  height: 50px;
+  background: #22C55E;
+  background: linear-gradient(145deg, rgba(34, 197, 94, 1) 0%, rgba(59, 130, 246, 1) 100%);
+  color: white;
+  font-size: 14pt;
+  display: flex;
+  justify-content: center;  /* Centraliza na horizontal */
+  align-items: center;
+  border-radius: 5px;
+}
+.conteudo_desenvolvedor{
+  margin-left: 1rem;
+}
+.conteudo_desenvolvedor a{
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+.conteudo_desenvolvedor p{
+  margin-top: 2px;
 }
