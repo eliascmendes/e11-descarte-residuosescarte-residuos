@@ -4,7 +4,7 @@ async function connect() {
   if (global.connection && global.connection.state !== 'disconnected')
     return global.connection;
 
-  const connection = await mysql.createConnection("mysql://root:admin321@localhost:3306/residuos_db");
+  const connection = await mysql.createConnection("mysql://root:admin123@localhost:3306/residuos_db");
   console.log("Conectado ao MySQL!");
   global.connection = connection;
   return connection;
@@ -14,6 +14,12 @@ async function connect() {
 async function selectUsuarios() {
   const conn = await connect();
   const [rows] = await conn.query('SELECT * FROM Usuarios;');
+  return rows;
+}
+
+async function selectUsuarioPorEmail(email) {
+  const conn = await connect();
+  const [rows] = await conn.query('SELECT * FROM Usuarios WHERE email = ?;', [email]);
   return rows;
 }
 
@@ -30,10 +36,10 @@ async function selectDenuncias() {
   return rows;
 }
 
-async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url) {
+async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua) {
   const conn = await connect();
-  const sql = 'INSERT INTO Denuncias (usuario_id, latitude, longitude, descricao, foto_url) VALUES (?, ?, ?, ?, ?);';
-  await conn.query(sql, [usuario_id, latitude, longitude, descricao, foto_url]);
+  const sql = 'INSERT INTO Denuncias (usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
+  await conn.query(sql, [usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua]);
 }
 
 // Votos
@@ -43,19 +49,12 @@ async function votar(usuario_id, denuncia_id) {
   await conn.query(sql, [usuario_id, denuncia_id]);
 }
 
-// Comentários
-async function comentar(usuario_id, denuncia_id, texto) {
-  const conn = await connect();
-  const sql = 'INSERT INTO Comentarios (usuario_id, denuncia_id, texto) VALUES (?, ?, ?);';
-  await conn.query(sql, [usuario_id, denuncia_id, texto]);
-}
-
 module.exports = {
   selectUsuarios,
+  selectUsuarioPorEmail,
   insertUsuario,
   selectDenuncias,
   insertDenuncia,
-  votar,
-  comentar
+  votar
 };
 

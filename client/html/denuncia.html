@@ -1,27 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/denuncia.css">
-    <title>Denuncia</title>
+    <title>Denúncia</title>
 </head>
 <body>
      <section id="tela-denuncia">
         <div class="tela">
         <h1>Tela de Denúncia</h1>
-        <form>
+        <div id="mensagem-autenticacao" style="display: none; color: red; margin-bottom: 20px;">
+            Você precisa estar logado para fazer uma denúncia.
+            <a href="../index.html">Voltar para página inicial</a>
+        </div>
+        <form id="form-denuncia">
             <label for="cidade">Cidade</label>
-            <input type="text" id="cidade" name="cidade" ><br><br>
+            <input type="text" id="cidade" name="cidade" required><br><br>
 
-            <label for="cep">Cep</label>
-            <input type="text" id="cep" name="cep" ><br><br>
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" name="cep" required><br><br>
 
             <label for="rua">Rua</label>
-            <input type="text" id="rua" name="rua" ><br><br>
+            <input type="text" id="rua" name="rua" required><br><br>
 
             <label for="descricao">Descrição</label>
-            <textarea id="descricao" name="descricao" placeholder="Descreva o problema"></textarea><br><br>
+            <textarea id="descricao" name="descricao" placeholder="Descreva o problema" required></textarea><br><br>
 
             <label for="foto">Foto</label>
             <input type="file" id="foto" name="foto"><br><br>
@@ -30,5 +34,105 @@
         </form>
   </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const formDenuncia = document.getElementById('form-denuncia');
+            const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
+
+            if (!token) {
+                formDenuncia.style.display = 'none';
+                mensagemAutenticacao.innerHTML = 'Você precisa estar logado para fazer uma denúncia. Redirecionando para o login... <a href="../index.html">Voltar para página inicial</a>';
+                mensagemAutenticacao.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '../index.html?action=login';
+                }, 3000);
+                return;
+            }
+
+            verificarToken(token);
+
+            // Configurar o formulário
+            formDenuncia.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const cidade = document.getElementById('cidade').value.trim();
+                const cep = document.getElementById('cep').value.trim();
+                const rua = document.getElementById('rua').value.trim();
+                const descricao = document.getElementById('descricao').value.trim();
+                const fotoInput = document.getElementById('foto');
+                
+                if (!cidade || !cep || !rua || !descricao) {
+                    alert('Preencha todos os campos obrigatórios.');
+                    return;
+                }
+                
+                try {
+                    
+                    
+                    const resposta = await fetch('http://localhost:3000/denuncias', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            cidade,
+                            cep,
+                            rua,
+                            descricao,
+                            latitude: -23.5505, // Valores padrão para teste
+                            longitude: -46.6333 
+                        })
+                    });
+                    
+                    const dados = await resposta.json();
+                    
+                    if (resposta.ok) {
+                        alert('Denúncia enviada com sucesso!');
+                        formDenuncia.reset();
+                    } else {
+                        alert(`Erro ao enviar denúncia: ${dados.erro}`);
+                    }
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    alert('Ocorreu um erro ao enviar a denúncia. Tente novamente.');
+                }
+            });
+        });
+
+        async function verificarToken(token) {
+            try {
+                const resposta = await fetch('http://localhost:3000/verificar-token', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!resposta.ok) {
+                    localStorage.removeItem('token');
+                    document.getElementById('form-denuncia').style.display = 'none';
+                    const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
+                    mensagemAutenticacao.innerHTML = 'Você precisa estar logado para fazer uma denúncia. Redirecionando para o login... <a href="../index.html">Voltar para página inicial</a>';
+                    mensagemAutenticacao.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '../index.html?action=login';
+                    }, 3000);
+                }
+            } catch (erro) {
+                console.error('Erro ao verificar token:', erro);
+                document.getElementById('form-denuncia').style.display = 'none';
+                const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
+                mensagemAutenticacao.innerHTML = 'Erro ao verificar autenticação. Redirecionando... <a href="../index.html">Voltar para página inicial</a>';
+                mensagemAutenticacao.style.display = 'block';
+                localStorage.removeItem('token');
+                 setTimeout(() => {
+                    window.location.href = '../index.html?action=login';
+                }, 3000);
+            }
+        }
+    </script>
 </body>
 </html>
