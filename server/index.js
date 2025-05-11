@@ -14,7 +14,7 @@ app.use(cors({
   credentials: true
 }));
 
-const SECRET_KEY = '';
+const SECRET_KEY = require('crypto').randomBytes(64).toString('hex');
 
 const verificarToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
@@ -155,23 +155,7 @@ app.post('/votos', verificarToken, async (req, res) => {
     res.status(500).json({ erro: 'Erro ao registrar voto.', detalhes: err.message });
   }
 });
-    
-app.post('/comentarios', verificarToken, async (req, res) => {
-  const { denuncia_id, texto } = req.body;
-  const usuario_id = req.usuario.id;
-
-  if (!usuario_id || !denuncia_id || !texto) {
-    return res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
-  }
-
-  try {
-    await db.comentar(usuario_id, denuncia_id, texto);
-    res.status(201).json({ mensagem: 'Comentário adicionado com sucesso!' });
-  } catch (err) {
-    res.status(500).json({ erro: 'Erro ao adicionar comentário.', detalhes: err.message });
-  }
-});
-
+   
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

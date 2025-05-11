@@ -37,14 +37,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Verificar se o usuário está autenticado
             const token = localStorage.getItem('token');
             const formDenuncia = document.getElementById('form-denuncia');
             const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
 
             if (!token) {
                 formDenuncia.style.display = 'none';
+                mensagemAutenticacao.innerHTML = 'Você precisa estar logado para fazer uma denúncia. Redirecionando para o login... <a href="../index.html">Voltar para página inicial</a>';
                 mensagemAutenticacao.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '../index.html?action=login';
+                }, 3000);
                 return;
             }
 
@@ -109,15 +112,25 @@
                 });
                 
                 if (!resposta.ok) {
-                    // Token inválido
-                    document.getElementById('form-denuncia').style.display = 'none';
-                    document.getElementById('mensagem-autenticacao').style.display = 'block';
                     localStorage.removeItem('token');
+                    document.getElementById('form-denuncia').style.display = 'none';
+                    const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
+                    mensagemAutenticacao.innerHTML = 'Você precisa estar logado para fazer uma denúncia. Redirecionando para o login... <a href="../index.html">Voltar para página inicial</a>';
+                    mensagemAutenticacao.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '../index.html?action=login';
+                    }, 3000);
                 }
             } catch (erro) {
                 console.error('Erro ao verificar token:', erro);
                 document.getElementById('form-denuncia').style.display = 'none';
-                document.getElementById('mensagem-autenticacao').style.display = 'block';
+                const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
+                mensagemAutenticacao.innerHTML = 'Erro ao verificar autenticação. Redirecionando... <a href="../index.html">Voltar para página inicial</a>';
+                mensagemAutenticacao.style.display = 'block';
+                localStorage.removeItem('token');
+                 setTimeout(() => {
+                    window.location.href = '../index.html?action=login';
+                }, 3000);
             }
         }
     </script>

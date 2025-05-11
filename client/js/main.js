@@ -10,18 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Botão entrar
     const btnEntrar = document.getElementById('entrar');
     if (btnEntrar) {
-        btnEntrar.addEventListener('click', () => {
-            const cadastroSection = document.getElementById('tela2');
-            if (cadastroSection) {
-                cadastroSection.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => {
-                    document.getElementById('nome').focus();
-                }, 800);
-            }
-        });
+        if (!localStorage.getItem('token')) {
+            const btnEntrarClone = btnEntrar.cloneNode(true);
+            btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
+            
+            btnEntrarClone.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModalLogin();
+            });
+        }
     }
 
     const btnDenunciar = document.querySelector('#tela1 button');
@@ -92,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    //  formato de email
     function validarEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
@@ -250,51 +248,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const email = document.getElementById('login-email').value.trim();
                 const senha = document.getElementById('login-senha').value;
-                
-                let isValid = true;
-                let mensagemErro = '';
-                
-                if (email === '' || !validarEmail(email)) {
-                    isValid = false;
-                    mensagemErro = 'Por favor, insira um email válido.';
+
+                if (!email || !senha) {
+                    alert('Por favor, preencha e-mail e senha.');
+                    return;
                 }
-                else if (senha === '') {
-                    isValid = false;
-                    mensagemErro = 'Por favor, insira sua senha.';
-                }
-                
-                if (isValid) {
-                    try {
-                        const resposta = await fetch('http://localhost:3000/login', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ email, senha })
-                        });
-                        
-                        const dados = await resposta.json();
-                        
-                        if (resposta.ok) {
-                            // Armazenar token no localStorage
-                            localStorage.setItem('token', dados.token);
-                            localStorage.setItem('usuario', JSON.stringify(dados.usuario));
-                            
-                            alert('Login realizado com sucesso!');
-                            modal.style.display = 'none';
-                            e.target.reset();
-                            
-                            // Verificar se o usuário está na página inicial e atualizar a interface
-                            atualizarInterfaceUsuarioLogado();
-                        } else {
-                            alert(`Erro: ${dados.erro}`);
-                        }
-                    } catch (erro) {
-                        console.error('Erro:', erro);
-                        alert('Ocorreu um erro ao fazer login. Tente novamente.');
+
+                try {
+                    const resposta = await fetch('http://localhost:3000/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, senha })
+                    });
+
+                    const dados = await resposta.json();
+
+                    if (resposta.ok) {
+                        localStorage.setItem('token', dados.token);
+                        localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+                        alert('Login realizado com sucesso!');
+                        modal.style.display = 'none';
+                        atualizarInterfaceUsuarioLogado();
+                    } else {
+                        alert(`Erro no login: ${dados.erro}`);
                     }
-                } else {
-                    alert(mensagemErro);
+                } catch (erro) {
+                    console.error('Erro ao fazer login:', erro);
+                    alert('Ocorreu um erro ao tentar fazer login. Tente novamente.');
                 }
             });
         }
@@ -305,98 +287,114 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
-    // Função para atualizar a interface quando o usuário está logado
     function atualizarInterfaceUsuarioLogado() {
         const token = localStorage.getItem('token');
         const usuarioString = localStorage.getItem('usuario');
-        
-        if (token && usuarioString) {
-            try {
-                const usuario = JSON.parse(usuarioString);
-                
-                const btnEntrar = document.getElementById('entrar');
-                if (btnEntrar) {
-                    btnEntrar.textContent = usuario.nome || 'Minha Conta';
-                    
-                    const novoBtn = btnEntrar.cloneNode(true);
-                    btnEntrar.parentNode.replaceChild(novoBtn, btnEntrar);
-                    
-                    novoBtn.addEventListener('click', () => {
-                        const dropdownId = 'dropdown-conta';
-                        let dropdown = document.getElementById(dropdownId);
-                        
-                        if (!dropdown) {
-                            dropdown = document.createElement('div');
-                            dropdown.id = dropdownId;
-                            dropdown.className = 'dropdown-conta';
-                            dropdown.innerHTML = `
-                                <div class="dropdown-item">Meu Perfil</div>
-                                <div class="dropdown-item">Minhas Denúncias</div>
-                                <div class="dropdown-item sair">Sair</div>
-                            `;
-                            
-                            const style = document.createElement('style');
-                            style.textContent += `
-                                .dropdown-conta {
-                                    position: absolute;
-                                    right: 10px;
-                                    top: 60px;
-                                    background: white;
-                                    border-radius: 8px;
-                                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                                    padding: 10px 0;
-                                    z-index: 1000;
-                                    display: none;
-                                    width: 180px;
-                                }
-                                .dropdown-item {
-                                    padding: 8px 15px;
-                                    cursor: pointer;
-                                }
-                                .dropdown-item:hover {
-                                    background-color: #f9fafb;
-                                }
-                                .dropdown-item.sair {
-                                    color: #dc2626;
-                                }
-                            `;
-                            document.head.appendChild(style);
-                            document.querySelector('nav').appendChild(dropdown);
-                            
-                            document.querySelector('.dropdown-item.sair').addEventListener('click', () => {
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('usuario');
-                                window.location.reload();
-                            });
-                        }
-                        
-                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-                    });
-                    
-                    document.addEventListener('click', (e) => {
-                        const dropdown = document.getElementById('dropdown-conta');
-                        if (dropdown && !e.target.closest('#entrar') && !e.target.closest('#dropdown-conta')) {
-                            dropdown.style.display = 'none';
-                        }
-                    });
-                }
-                
-                const btnDenunciar = document.querySelector('#tela1 button');
-                if (btnDenunciar) {
-                    btnDenunciar.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.location.href = 'html/denuncia.html';
-                    });
-                }
-            } catch (erro) {
-                console.error('Erro ao processar informações do usuário:', erro);
+        const btnEntrar = document.getElementById('entrar');
+        const divOpcoesNav = document.querySelector('.opcoes_nav'); 
+
+        if (token && usuarioString && btnEntrar && divOpcoesNav) {
+            const usuario = JSON.parse(usuarioString);
+            
+            btnEntrar.textContent = 'Sair';
+            btnEntrar.removeEventListener('click', abrirModalLogin); 
+            btnEntrar.addEventListener('click', logout);
+
+            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+            if (!nomeUsuarioEl) {
+                nomeUsuarioEl = document.createElement('span');
+                nomeUsuarioEl.id = 'nome-usuario-nav';
+                nomeUsuarioEl.style.color = '#fff'; 
+                nomeUsuarioEl.style.marginRight = '15px';
+                divOpcoesNav.insertBefore(nomeUsuarioEl, btnEntrar); 
+            }
+            nomeUsuarioEl.textContent = `Olá, ${usuario.nome}!`;
+
+        } else if (btnEntrar) {
+            btnEntrar.textContent = 'Entrar';
+            btnEntrar.removeEventListener('click', logout);
+            
+            // Remove qualquer listener de clique existente para evitar duplicação
+            const btnEntrarClone = btnEntrar.cloneNode(true);
+            btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
+
+            btnEntrarClone.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModalLogin();
+            });
+
+            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+            if (nomeUsuarioEl) {
+                nomeUsuarioEl.remove();
             }
         }
     }
 
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        alert('Você foi desconectado.');
+        atualizarInterfaceUsuarioLogado();
+        
+    }
+
+   
+    const btnEntrarInicial = document.getElementById('entrar');
+    if (btnEntrarInicial && !localStorage.getItem('token')) {
+        const btnEntrarCloneInicial = btnEntrarInicial.cloneNode(true);
+        btnEntrarInicial.parentNode.replaceChild(btnEntrarCloneInicial, btnEntrarInicial);
+        
+        btnEntrarCloneInicial.addEventListener('click', (e) => {
+            e.preventDefault();
+            abrirModalLogin();
+        });
+    }
+
     atualizarInterfaceUsuarioLogado();
 
-    // Efeito de digitação para o texto principal
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'login') {
+        const novaUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, novaUrl);
+        
+        if (!localStorage.getItem('token')) {
+             abrirModalLogin();
+        }
+    }
+
+    const btnDenunciarTela1 = document.querySelector('#tela1 button'); 
+    const linkDenunciarTela4 = document.querySelector('a[href="../client/html/denuncia.html"]'); 
+
+    function verificarLoginParaDenuncia(event) {
+        if (!localStorage.getItem('token')) {
+            event.preventDefault(); 
+            alert('Você precisa estar logado para fazer uma denúncia.');
+            abrirModalLogin();
+        }
+    }
+
+    if (btnDenunciarTela1) {
+        btnDenunciarTela1.removeEventListener('click', () => {
+            const funcionalidadesSection = document.getElementById('tela3');
+            if (funcionalidadesSection) {
+                funcionalidadesSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        btnDenunciarTela1.addEventListener('click', (e) => {
+            if (!localStorage.getItem('token')) {
+                 e.preventDefault();
+                 alert('Você precisa estar logado para fazer uma denúncia.');
+                 abrirModalLogin();
+            } else {
+                 window.location.href = '../client/html/denuncia.html';
+            }
+        });
+    }
+
+    if (linkDenunciarTela4) {
+        linkDenunciarTela4.addEventListener('click', verificarLoginParaDenuncia);
+    }
+    
     const textoTitulo = document.querySelector('#tela1 h1');
     if (textoTitulo) {
         const textoOriginal = textoTitulo.textContent;

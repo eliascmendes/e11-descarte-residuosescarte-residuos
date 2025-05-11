@@ -55,7 +55,6 @@ module.exports = {
   insertUsuario,
   selectDenuncias,
   insertDenuncia,
-  votar,
-  comentar
+  votar
 };
 
