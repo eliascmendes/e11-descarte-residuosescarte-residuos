@@ -6,12 +6,16 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
-// Chave secreta para JWT
-const SECRET_KEY = 'chave_secreta_do_projeto_descarte_residuos';
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
-// Middleware para verificar autenticação
+const SECRET_KEY = '';
+
 const verificarToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   
@@ -32,7 +36,6 @@ app.get('/', (req, res) => {
   res.send('Servidor funcionando!');
 });
 
-// Rota de login
 app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
   
@@ -54,7 +57,6 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ erro: 'Credenciais inválidas.' });
     }
     
-    // Gerar token JWT
     const token = jwt.sign(
       { id: usuario.id, nome: usuario.nome, email: usuario.email, tipo: usuario.tipo },
       SECRET_KEY,
@@ -76,7 +78,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Rota para verificar token
 app.get('/verificar-token', verificarToken, (req, res) => {
   res.json({ 
     valido: true, 
@@ -84,7 +85,6 @@ app.get('/verificar-token', verificarToken, (req, res) => {
   });
 });
 
-// Listar usuários
 app.get('/usuarios', async (req, res) => {
   try {
     const usuarios = await db.selectUsuarios();
@@ -94,7 +94,6 @@ app.get('/usuarios', async (req, res) => {
   }
 });
 
-// Criar novo usuário
 app.post('/usuarios', async (req, res) => {
   const { nome, email, senha } = req.body;
 
@@ -103,7 +102,6 @@ app.post('/usuarios', async (req, res) => {
   }
 
   try {
-    // Verificar se email já existe
     const usuariosExistentes = await db.selectUsuarioPorEmail(email);
     if (usuariosExistentes.length > 0) {
       return res.status(400).json({ erro: 'Este email já está em uso.' });
@@ -117,7 +115,6 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
-// Listar denúncias
 app.get('/denuncias', async (req, res) => {
   try {
     const denuncias = await db.selectDenuncias();
@@ -127,7 +124,6 @@ app.get('/denuncias', async (req, res) => {
   }
 });
 
-// Criar denúncia (rota protegida)
 app.post('/denuncias', verificarToken, async (req, res) => {
   const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
   const usuario_id = req.usuario.id;
@@ -144,7 +140,6 @@ app.post('/denuncias', verificarToken, async (req, res) => {
   }
 });
 
-// Votar em denúncia (rota protegida)
 app.post('/votos', verificarToken, async (req, res) => {
   const { denuncia_id } = req.body;
   const usuario_id = req.usuario.id;
@@ -160,8 +155,7 @@ app.post('/votos', verificarToken, async (req, res) => {
     res.status(500).json({ erro: 'Erro ao registrar voto.', detalhes: err.message });
   }
 });
-
-// Comentar em denúncia (rota protegida)
+    
 app.post('/comentarios', verificarToken, async (req, res) => {
   const { denuncia_id, texto } = req.body;
   const usuario_id = req.usuario.id;

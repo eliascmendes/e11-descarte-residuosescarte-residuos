@@ -314,16 +314,13 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const usuario = JSON.parse(usuarioString);
                 
-                // Mudar o botão "Entrar" para o nome do usuário ou "Minha Conta"
                 const btnEntrar = document.getElementById('entrar');
                 if (btnEntrar) {
                     btnEntrar.textContent = usuario.nome || 'Minha Conta';
                     
-                    // Remover o evento atual
                     const novoBtn = btnEntrar.cloneNode(true);
                     btnEntrar.parentNode.replaceChild(novoBtn, btnEntrar);
                     
-                    // Adicionar dropdown para opções de conta
                     novoBtn.addEventListener('click', () => {
                         const dropdownId = 'dropdown-conta';
                         let dropdown = document.getElementById(dropdownId);
@@ -366,7 +363,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             document.head.appendChild(style);
                             document.querySelector('nav').appendChild(dropdown);
                             
-                            // Adicionar eventos aos itens do dropdown
                             document.querySelector('.dropdown-item.sair').addEventListener('click', () => {
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('usuario');
@@ -374,11 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                         }
                         
-                        // Mostrar ou esconder o dropdown
                         dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
                     });
                     
-                    // Fechar dropdown quando clicar fora
                     document.addEventListener('click', (e) => {
                         const dropdown = document.getElementById('dropdown-conta');
                         if (dropdown && !e.target.closest('#entrar') && !e.target.closest('#dropdown-conta')) {
@@ -387,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 
-                // Atualizar links para "Denunciar"
                 const btnDenunciar = document.querySelector('#tela1 button');
                 if (btnDenunciar) {
                     btnDenunciar.addEventListener('click', (e) => {
@@ -401,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Verificar se o usuário já está logado ao carregar a página
     atualizarInterfaceUsuarioLogado();
 
     // Efeito de digitação para o texto principal

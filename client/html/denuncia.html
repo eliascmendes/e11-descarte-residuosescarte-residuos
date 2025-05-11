@@ -43,13 +43,11 @@
             const mensagemAutenticacao = document.getElementById('mensagem-autenticacao');
 
             if (!token) {
-                // Usuário não está autenticado
                 formDenuncia.style.display = 'none';
                 mensagemAutenticacao.style.display = 'block';
                 return;
             }
 
-            // Verificar se o token é válido
             verificarToken(token);
 
             // Configurar o formulário
@@ -62,15 +60,13 @@
                 const descricao = document.getElementById('descricao').value.trim();
                 const fotoInput = document.getElementById('foto');
                 
-                // Verificar campos
                 if (!cidade || !cep || !rua || !descricao) {
                     alert('Preencha todos os campos obrigatórios.');
                     return;
                 }
                 
                 try {
-                    // Por enquanto, não estamos enviando a foto
-                    // Na implementação completa, você usaria FormData para enviar arquivos
+                    
                     
                     const resposta = await fetch('http://localhost:3000/denuncias', {
                         method: 'POST',
@@ -84,7 +80,7 @@
                             rua,
                             descricao,
                             latitude: -23.5505, // Valores padrão para teste
-                            longitude: -46.6333 // Na implementação final, usar geolocalização
+                            longitude: -46.6333 
                         })
                     });
                     

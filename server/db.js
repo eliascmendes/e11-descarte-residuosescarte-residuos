@@ -49,13 +49,6 @@ async function votar(usuario_id, denuncia_id) {
   await conn.query(sql, [usuario_id, denuncia_id]);
 }
 
-// Comentários
-async function comentar(usuario_id, denuncia_id, texto) {
-  const conn = await connect();
-  const sql = 'INSERT INTO Comentarios (usuario_id, denuncia_id, texto) VALUES (?, ?, ?);';
-  await conn.query(sql, [usuario_id, denuncia_id, texto]);
-}
-
 module.exports = {
   selectUsuarios,
   selectUsuarioPorEmail,
