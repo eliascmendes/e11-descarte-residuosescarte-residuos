@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             const style = document.createElement('style');
-            style.textContent = `
+            style.textContent += `
                 .modal {
                     display: none;
                     position: fixed;
@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     text-decoration: none;
                     font-size: 14px;
                 }
+                
             `;
             document.head.appendChild(style);
             document.body.appendChild(modal);
