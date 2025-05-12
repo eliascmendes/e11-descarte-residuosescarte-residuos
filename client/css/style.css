@@ -161,8 +161,6 @@ nav a {
   align-items: center;
   padding: 3rem 0;
   background-color: #f0fdf4;
-}
-
   background: #F0FDF4;
   background: linear-gradient(145deg, rgba(240, 253, 244, 1) 0%, rgba(239, 246, 255, 1) 100%);
 }
@@ -176,7 +174,6 @@ nav a {
 .cadastro-info {
   flex: 1;
   padding: 2.5rem;
-  background-color: #f0fdf4;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
 }
