@@ -10,18 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Botão entrar
     const btnEntrar = document.getElementById('entrar');
     if (btnEntrar) {
-        btnEntrar.addEventListener('click', () => {
-            const cadastroSection = document.getElementById('tela2');
-            if (cadastroSection) {
-                cadastroSection.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => {
-                    document.getElementById('nome').focus();
-                }, 800);
-            }
-        });
+        if (!localStorage.getItem('token')) {
+            const btnEntrarClone = btnEntrar.cloneNode(true);
+            btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
+            
+            btnEntrarClone.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModalLogin();
+            });
+        }
     }
 
     const btnDenunciar = document.querySelector('#tela1 button');
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Validação do formulário de cadastro
     const formCadastro = document.querySelector('.cadastro-form form');
     if (formCadastro) {
-        formCadastro.addEventListener('submit', (e) => {
+        formCadastro.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const nome = document.getElementById('nome').value.trim();
@@ -62,16 +61,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (isValid) {
-                // Simular envio bem-sucedido
-                alert('Cadastro realizado com sucesso!');
-                formCadastro.reset();
+                try {
+                    const resposta = await fetch('http://localhost:3000/usuarios', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ nome, email, senha })
+                    });
+                    
+                    const dados = await resposta.json();
+                    
+                    if (resposta.ok) {
+                        alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                        formCadastro.reset();
+                        
+                        // Abrir modal de login após cadastro
+                        abrirModalLogin();
+                    } else {
+                        alert(`Erro: ${dados.erro}`);
+                    }
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    alert('Ocorreu um erro ao cadastrar. Tente novamente.');
+                }
             } else {
                 alert(mensagemErro);
             }
         });
     }
 
-    //  formato de email
     function validarEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
@@ -224,38 +243,158 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            modal.querySelector('#form-login').addEventListener('submit', (e) => {
+            modal.querySelector('#form-login').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const email = document.getElementById('login-email').value.trim();
                 const senha = document.getElementById('login-senha').value;
-                
-                let isValid = true;
-                let mensagemErro = '';
-                
-                if (email === '' || !validarEmail(email)) {
-                    isValid = false;
-                    mensagemErro = 'Por favor, insira um email válido.';
+
+                if (!email || !senha) {
+                    alert('Por favor, preencha e-mail e senha.');
+                    return;
                 }
-                else if (senha === '') {
-                    isValid = false;
-                    mensagemErro = 'Por favor, insira sua senha.';
-                }
-                
-                if (isValid) {
-                    alert('Login realizado com sucesso!');
-                    modal.style.display = 'none';
-                    e.target.reset();
-                } else {
-                    alert(mensagemErro);
+
+                try {
+                    const resposta = await fetch('http://localhost:3000/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, senha })
+                    });
+
+                    const dados = await resposta.json();
+
+                    if (resposta.ok) {
+                        localStorage.setItem('token', dados.token);
+                        localStorage.setItem('usuario', JSON.stringify(dados.usuario));
+                        alert('Login realizado com sucesso!');
+                        modal.style.display = 'none';
+                        atualizarInterfaceUsuarioLogado();
+                    } else {
+                        alert(`Erro no login: ${dados.erro}`);
+                    }
+                } catch (erro) {
+                    console.error('Erro ao fazer login:', erro);
+                    alert('Ocorreu um erro ao tentar fazer login. Tente novamente.');
                 }
             });
         }
         
         modal.style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('login-email').focus();
+        }, 100);
     }
 
-    // Efeito de digitação para o texto principal
+    function atualizarInterfaceUsuarioLogado() {
+        const token = localStorage.getItem('token');
+        const usuarioString = localStorage.getItem('usuario');
+        const btnEntrar = document.getElementById('entrar');
+        const divOpcoesNav = document.querySelector('.opcoes_nav'); 
+
+        if (token && usuarioString && btnEntrar && divOpcoesNav) {
+            const usuario = JSON.parse(usuarioString);
+            
+            btnEntrar.textContent = 'Sair';
+            btnEntrar.removeEventListener('click', abrirModalLogin); 
+            btnEntrar.addEventListener('click', logout);
+
+            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+            if (!nomeUsuarioEl) {
+                nomeUsuarioEl = document.createElement('span');
+                nomeUsuarioEl.id = 'nome-usuario-nav';
+                nomeUsuarioEl.style.color = '#fff'; 
+                nomeUsuarioEl.style.marginRight = '15px';
+                divOpcoesNav.insertBefore(nomeUsuarioEl, btnEntrar); 
+            }
+            nomeUsuarioEl.textContent = `Olá, ${usuario.nome}!`;
+
+        } else if (btnEntrar) {
+            btnEntrar.textContent = 'Entrar';
+            btnEntrar.removeEventListener('click', logout);
+            
+            // Remove qualquer listener de clique existente para evitar duplicação
+            const btnEntrarClone = btnEntrar.cloneNode(true);
+            btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
+
+            btnEntrarClone.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModalLogin();
+            });
+
+            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+            if (nomeUsuarioEl) {
+                nomeUsuarioEl.remove();
+            }
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        alert('Você foi desconectado.');
+        atualizarInterfaceUsuarioLogado();
+        
+    }
+
+   
+    const btnEntrarInicial = document.getElementById('entrar');
+    if (btnEntrarInicial && !localStorage.getItem('token')) {
+        const btnEntrarCloneInicial = btnEntrarInicial.cloneNode(true);
+        btnEntrarInicial.parentNode.replaceChild(btnEntrarCloneInicial, btnEntrarInicial);
+        
+        btnEntrarCloneInicial.addEventListener('click', (e) => {
+            e.preventDefault();
+            abrirModalLogin();
+        });
+    }
+
+    atualizarInterfaceUsuarioLogado();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'login') {
+        const novaUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, novaUrl);
+        
+        if (!localStorage.getItem('token')) {
+             abrirModalLogin();
+        }
+    }
+
+    const btnDenunciarTela1 = document.querySelector('#tela1 button'); 
+    const linkDenunciarTela4 = document.querySelector('a[href="../client/html/denuncia.html"]'); 
+
+    function verificarLoginParaDenuncia(event) {
+        if (!localStorage.getItem('token')) {
+            event.preventDefault(); 
+            alert('Você precisa estar logado para fazer uma denúncia.');
+            abrirModalLogin();
+        }
+    }
+
+    if (btnDenunciarTela1) {
+        btnDenunciarTela1.removeEventListener('click', () => {
+            const funcionalidadesSection = document.getElementById('tela3');
+            if (funcionalidadesSection) {
+                funcionalidadesSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        btnDenunciarTela1.addEventListener('click', (e) => {
+            if (!localStorage.getItem('token')) {
+                 e.preventDefault();
+                 alert('Você precisa estar logado para fazer uma denúncia.');
+                 abrirModalLogin();
+            } else {
+                 window.location.href = '../client/html/denuncia.html';
+            }
+        });
+    }
+
+    if (linkDenunciarTela4) {
+        linkDenunciarTela4.addEventListener('click', verificarLoginParaDenuncia);
+    }
+    
     const textoTitulo = document.querySelector('#tela1 h1');
     if (textoTitulo) {
         const textoOriginal = textoTitulo.textContent;
