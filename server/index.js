@@ -115,6 +115,48 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
+// Buscar usuário específico
+app.get('/usuarios/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const usuario = await db.getUsuarioById(id);
+    if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    res.json(usuario);
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao buscar usuário.', detalhes: err.message });
+  }
+});
+
+// Atualizar usuário
+app.put('/usuarios/:id', async (req, res) => {
+  const id = req.params.id;
+  const { nome, email, senha } = req.body;
+
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
+  }
+
+  try {
+    const senha_hash = await bcrypt.hash(senha, 10);
+    await db.updateUsuario(id, nome, email, senha_hash);
+    res.json({ mensagem: 'Usuário atualizado com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao atualizar usuário.', detalhes: err.message });
+  }
+});
+
+// Remover usuário
+app.delete('/usuarios/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    await db.deleteUsuario(id);
+    res.json({ mensagem: 'Usuário removido com sucesso.' });
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao remover usuário.', detalhes: err.message });
+  }
+});
+
+// Listar denúncias
 app.get('/denuncias', async (req, res) => {
   try {
     const denuncias = await db.selectDenuncias();
