@@ -14,21 +14,35 @@ app.use(cors({
   credentials: true
 }));
 
-const SECRET_KEY = require('crypto').randomBytes(64).toString('hex');
+const JWT_SECRET = require('crypto').randomBytes(64).toString('hex');
+const REFRESH_TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex');
 
-const verificarToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1];
+let refreshTokens = [];
+
+// Middleware para verificar autenticação
+const isAuthenticated = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   
   if (!token) {
     return res.status(401).json({ erro: 'Acesso negado. Token não fornecido.' });
   }
   
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.usuario = decoded;
     next();
   } catch (error) {
     res.status(401).json({ erro: 'Token inválido ou expirado.' });
+  }
+};
+
+// Middleware para verificar permissões de administrador
+const isAdmin = (req, res, next) => {
+  if (req.usuario && req.usuario.tipo === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ erro: 'Acesso negado. Permissão de administrador necessária.' });
   }
 };
 
@@ -59,13 +73,22 @@ app.post('/login', async (req, res) => {
     
     const token = jwt.sign(
       { id: usuario.id, nome: usuario.nome, email: usuario.email, tipo: usuario.tipo },
-      SECRET_KEY,
-      { expiresIn: '24h' }
+      JWT_SECRET,
+      { expiresIn: '1h' }
     );
+    
+    const refreshToken = jwt.sign(
+      { id: usuario.id, nome: usuario.nome, email: usuario.email, tipo: usuario.tipo },
+      REFRESH_TOKEN_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    refreshTokens.push(refreshToken);
     
     res.json({
       mensagem: 'Login realizado com sucesso!',
       token,
+      refreshToken,
       usuario: {
         id: usuario.id,
         nome: usuario.nome,
@@ -78,14 +101,49 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.get('/verificar-token', verificarToken, (req, res) => {
+app.post('/refresh-token', (req, res) => {
+  const { refreshToken } = req.body;
+  
+  if (!refreshToken) {
+    return res.status(401).json({ erro: 'Refresh token não fornecido.' });
+  }
+  
+  if (!refreshTokens.includes(refreshToken)) {
+    return res.status(403).json({ erro: 'Refresh token inválido.' });
+  }
+  
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+    
+    const token = jwt.sign(
+      { id: decoded.id, nome: decoded.nome, email: decoded.email, tipo: decoded.tipo },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    res.json({ token });
+  } catch (error) {
+    refreshTokens = refreshTokens.filter(token => token !== refreshToken);
+    res.status(403).json({ erro: 'Refresh token inválido ou expirado.' });
+  }
+});
+
+app.post('/logout', (req, res) => {
+  const { refreshToken } = req.body;
+  
+  refreshTokens = refreshTokens.filter(token => token !== refreshToken);
+  
+  res.status(204).send();
+});
+
+app.get('/verificar-token', isAuthenticated, (req, res) => {
   res.json({ 
     valido: true, 
     usuario: req.usuario 
   });
 });
 
-app.get('/usuarios', async (req, res) => {
+app.get('/usuarios', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const usuarios = await db.selectUsuarios();
     res.json(usuarios);
@@ -115,9 +173,13 @@ app.post('/usuarios', async (req, res) => {
   }
 });
 
-// Buscar usuário específico
-app.get('/usuarios/:id', async (req, res) => {
+app.get('/usuarios/:id', isAuthenticated, async (req, res) => {
   const id = req.params.id;
+  
+  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+    return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para acessar este recurso.' });
+  }
+  
   try {
     const usuario = await db.getUsuarioById(id);
     if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
@@ -127,9 +189,14 @@ app.get('/usuarios/:id', async (req, res) => {
   }
 });
 
-// Atualizar usuário
-app.put('/usuarios/:id', async (req, res) => {
+app.put('/usuarios/:id', isAuthenticated, async (req, res) => {
   const id = req.params.id;
+  
+  // Verificar se o usuário é admin ou o próprio usuário
+  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+    return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para atualizar este usuário.' });
+  }
+  
   const { nome, email, senha } = req.body;
 
   if (!nome || !email || !senha) {
@@ -145,9 +212,13 @@ app.put('/usuarios/:id', async (req, res) => {
   }
 });
 
-// Remover usuário
-app.delete('/usuarios/:id', async (req, res) => {
+app.delete('/usuarios/:id', isAuthenticated, async (req, res) => {
   const id = req.params.id;
+  
+  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+    return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para remover este usuário.' });
+  }
+  
   try {
     await db.deleteUsuario(id);
     res.json({ mensagem: 'Usuário removido com sucesso.' });
@@ -156,7 +227,6 @@ app.delete('/usuarios/:id', async (req, res) => {
   }
 });
 
-// Listar denúncias
 app.get('/denuncias', async (req, res) => {
   try {
     const denuncias = await db.selectDenuncias();
@@ -166,7 +236,7 @@ app.get('/denuncias', async (req, res) => {
   }
 });
 
-app.post('/denuncias', verificarToken, async (req, res) => {
+app.post('/denuncias', isAuthenticated, async (req, res) => {
   const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
   const usuario_id = req.usuario.id;
 
@@ -182,7 +252,7 @@ app.post('/denuncias', verificarToken, async (req, res) => {
   }
 });
 
-app.post('/votos', verificarToken, async (req, res) => {
+app.post('/votos', isAuthenticated, async (req, res) => {
   const { denuncia_id } = req.body;
   const usuario_id = req.usuario.id;
 
