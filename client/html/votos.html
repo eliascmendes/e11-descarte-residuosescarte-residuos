@@ -1,78 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/votos.css">
-    <title>Sistema de votos</title>
+    <title>Sistema de Votos</title>
 </head>
 <body>
-    <h1>Denúncias</h1>
-    <div class="tela_votos">
-        <div class="denuncia">
-            <h2>Lixo perto da praia</h2>
-            <div class="denuncia_info">
-                <div class="imagem">
-                    <img src="../images/denuncia_exemplo.jpg" alt="descarte de residuos exemplo">
-                </div>
-                <div class="denuncia_descricao">
-                    <div class="denuncia_localizacao">Praia Central, Balneário Camboriú – SC</div>
-                    <p>Diversos sacos plásticos e garrafas foram descartados irregularmente na faixa de areia, próximo à área onde crianças costumam brincar. O lixo está sendo arrastado pela maré. </p>
-                </div>
-            </div>
-            <div class="denuncia_dados">
-                <div class="contagem_votos">15 votos</div>
-                <button>Votar</button>
-            </div>
-        </div>
-        <div class="denuncia">
-            <h2>Papel jogado na rua</h2>
-            <div class="denuncia_info">
-                <div class="imagem">
-                    <img src="../images/denuncia_exemplo.jpg" alt="descarte de residuos exemplo">
-                </div>
-                <div class="denuncia_descricao">
-                    <div class="denuncia_localizacao">Avenida Paulista, altura do número 1500, São Paulo – SP</div>
-                    <p>Folhetos de propaganda e embalagens estão espalhados pela calçada, atrapalhando pedestres e contribuindo para o entupimento de bueiros próximos.</p>
-                </div>
-            </div>
-            <div class="denuncia_dados">
-                <div class="contagem_votos">14 votos</div>
-                <button>Votar</button>
-            </div>
-        </div>
-        <div class="denuncia">
-            <h2>Canudos espalhados</h2>
-            <div class="denuncia_info">
-                <div class="imagem">
-                    <img src="../images/denuncia_exemplo.jpg" alt="descarte de residuos exemplo">
-                </div>
-                <div class="denuncia_descricao">
-                    <div class="denuncia_localizacao">Praça das Bandeiras, Santos – SP</div>
-                    <p>Grande quantidade de canudos plásticos descartados ao redor das lanchonetes locais. A sujeira se acumula próximo aos bancos e canteiros.</p>
-                </div>
-            </div>
-            <div class="denuncia_dados">
-                <div class="contagem_votos">10 votos</div>
-                <button>Votar</button>
-            </div>
-        </div>
-        <div class="denuncia">
-            <h2>Cuidado, vidro no chão</h2>
-            <div class="denuncia_info">
-                <div class="imagem">
-                    <img src="../images/denuncia_exemplo.jpg" alt="descarte de residuos exemplo">
-                </div>
-                <div class="denuncia_descricao">
-                    <div class="denuncia_localizacao">Rua das Acácias, esquina com Rua Palmeiras, Belo Horizonte – MG</div>
-                    <p> Garrafa de vidro quebrada no meio da calçada, oferecendo risco de acidentes a pedestres e animais. Local com grande fluxo de crianças após a escola.</p>
-                </div>
-            </div>
-            <div class="denuncia_dados">
-                <div class="contagem_votos">7 votos</div>
-                <button>Votar</button>
-            </div>
-        </div>
+    <h1>Denúncias Recentes</h1>
+    <div class="tela_votos" id="denuncias-container">
+        <div class="sem-denuncias">Carregando denúncias...</div>
     </div>
+
+    <script>
+        // Verificar autenticação antes de permitir acesso à página
+        document.addEventListener('DOMContentLoaded', async () => {
+            async function verificarToken() {
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    return false;
+                }
+                
+                try {
+                    const resposta = await fetch('http://localhost:3000/verificar-token', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    return resposta.ok;
+                } catch (erro) {
+                    console.error('Erro ao verificar token:', erro);
+                    return false;
+                }
+            }
+
+            const autenticado = await verificarToken();
+            if (!autenticado) {
+                alert('Você precisa estar logado para acessar esta página.');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Obter elemento do container de denúncias
+            const denunciasContainer = document.getElementById('denuncias-container');
+            
+            async function carregarDenuncias() {
+                try {
+                    const resposta = await fetch('http://localhost:3000/denuncias');
+                    
+                    if (!resposta.ok) {
+                        throw new Error('Erro ao carregar denúncias');
+                    }
+                    
+                    const denuncias = await resposta.json();
+                    
+                    if (denuncias.length === 0) {
+                        denunciasContainer.innerHTML = '<div class="sem-denuncias">Nenhuma denúncia encontrada.</div>';
+                        return;
+                    }
+                    
+                    // Limpar o container
+                    denunciasContainer.innerHTML = '';
+                    
+                    // Adicionar cada denúncia ao container
+                    denuncias.forEach(denuncia => {
+                        const card = criarCardDenuncia(denuncia);
+                        denunciasContainer.appendChild(card);
+                    });
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    denunciasContainer.innerHTML = '<div class="sem-denuncias">Erro ao carregar denúncias. Tente novamente mais tarde.</div>';
+                }
+            }
+            
+            function criarCardDenuncia(denuncia) {
+                const card = document.createElement('div');
+                card.className = 'denuncia';
+                
+                card.innerHTML = `
+                    <h2>${denuncia.descricao || 'Denúncia sem título'}</h2>
+                    <div class="denuncia_info">
+                        <div class="imagem">
+                            ${denuncia.foto_url 
+                                ? `<img src="${denuncia.foto_url}" alt="Foto da denúncia">`
+                                : `<img src="../images/denuncia_exemplo.jpg" alt="Imagem padrão">`
+                            }
+                        </div>
+                        <div class="denuncia_descricao">
+                            <div class="denuncia_localizacao">${denuncia.cidade || 'Local não informado'}, ${denuncia.rua || ''}</div>
+                            <p>${denuncia.descricao || 'Sem descrição'}</p>
+                        </div>
+                    </div>
+                    <div class="denuncia_dados">
+                        <div class="contagem_votos">${denuncia.votos || 0} votos</div>
+                        <button class="btn-votar" data-id="${denuncia.id}">Votar</button>
+                    </div>
+                `;
+                
+                const botaoVoto = card.querySelector('.btn-votar');
+                botaoVoto.addEventListener('click', () => votar(denuncia.id, botaoVoto));
+                
+                return card;
+            }
+            
+            function formatarData(dataString) {
+                if (!dataString) return 'Data não informada';
+                
+                const data = new Date(dataString);
+                return data.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+            
+            async function votar(denunciaId, botao) {
+                if (botao.disabled) {
+                    alert('Você já votou nesta denúncia.');
+                    return;
+                }
+                
+                try {
+                    const token = localStorage.getItem('token');
+                    const resposta = await fetch('http://localhost:3000/votos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ denuncia_id: denunciaId })
+                    });
+                    
+                    const dados = await resposta.json();
+                    
+                    if (resposta.ok) {
+                        botao.disabled = true;
+                        botao.textContent = 'Votado';
+                        const contador = botao.parentNode.querySelector('.contagem_votos');
+                        const votos = parseInt(contador.textContent) + 1;
+                        contador.textContent = `${votos} votos`;
+                        
+                        alert('Voto registrado com sucesso!');
+                    } else {
+                        alert(`Erro: ${dados.erro}`);
+                    }
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    alert('Ocorreu um erro ao registrar o voto. Tente novamente.');
+                }
+            }
+            
+            carregarDenuncias();
+        });
+    </script>
 </body>
 </html>

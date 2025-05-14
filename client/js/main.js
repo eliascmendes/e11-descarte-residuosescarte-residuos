@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnEntrar = document.getElementById('entrar');
     if (btnEntrar) {
-        if (!localStorage.getItem('token')) {
+        if (!getToken()) {
             const btnEntrarClone = btnEntrar.cloneNode(true);
             btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
             
@@ -131,6 +131,106 @@ document.addEventListener('DOMContentLoaded', () => {
         loginLink.addEventListener('click', (e) => {
             e.preventDefault();
             abrirModalLogin();
+        });
+    }
+
+    // Gerenciamento de tokens JWT
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function getRefreshToken() {
+        return localStorage.getItem('refreshToken');
+    }
+
+    function setAuthTokens(token, refreshToken) {
+        localStorage.setItem('token', token);
+        if (refreshToken) {
+            localStorage.setItem('refreshToken', refreshToken);
+        }
+    }
+
+    function removeAuthTokens() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('usuario');
+    }
+
+    async function verificarToken() {
+        const token = getToken();
+        
+        if (!token) {
+            return false;
+        }
+        
+        try {
+            const resposta = await fetch('http://localhost:3000/verificar-token', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (resposta.ok) {
+                return true;
+            } else {
+                return await tentarRenovarToken();
+            }
+        } catch (erro) {
+            console.error('Erro ao verificar token:', erro);
+            return await tentarRenovarToken();
+        }
+    }
+
+    async function tentarRenovarToken() {
+        const refreshToken = getRefreshToken();
+        
+        if (!refreshToken) {
+            removeAuthTokens();
+            return false;
+        }
+        
+        try {
+            const resposta = await fetch('http://localhost:3000/refresh-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ refreshToken })
+            });
+            
+            if (resposta.ok) {
+                const dados = await resposta.json();
+                setAuthTokens(dados.token);
+                return true;
+            } else {
+                removeAuthTokens();
+                return false;
+            }
+        } catch (erro) {
+            console.error('Erro ao renovar token:', erro);
+            removeAuthTokens();
+            return false;
+        }
+    }
+
+    async function fetchAutenticado(url, options = {}) {
+        const tokenValido = await verificarToken();
+        
+        if (!tokenValido) {
+            alert('Sua sessão expirou. Por favor, faça login novamente.');
+            abrirModalLogin();
+            throw new Error('Token inválido ou expirado');
+        }
+        
+        // Configurar headers com token
+        const token = getToken();
+        const headers = options.headers || {};
+        headers['Authorization'] = `Bearer ${token}`;
+        
+        // Fazer requisição com headers atualizados
+        return fetch(url, {
+            ...options,
+            headers
         });
     }
 
@@ -266,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const dados = await resposta.json();
 
                     if (resposta.ok) {
-                        localStorage.setItem('token', dados.token);
+                        setAuthTokens(dados.token, dados.refreshToken);
                         localStorage.setItem('usuario', JSON.stringify(dados.usuario));
                         alert('Login realizado com sucesso!');
                         modal.style.display = 'none';
@@ -287,13 +387,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
-    function atualizarInterfaceUsuarioLogado() {
-        const token = localStorage.getItem('token');
+    async function atualizarInterfaceUsuarioLogado() {
+        // Verificar token antes de atualizar a interface
+        const tokenValido = await verificarToken();
         const usuarioString = localStorage.getItem('usuario');
         const btnEntrar = document.getElementById('entrar');
         const divOpcoesNav = document.querySelector('.opcoes_nav'); 
 
-        if (token && usuarioString && btnEntrar && divOpcoesNav) {
+        if (tokenValido && usuarioString && btnEntrar && divOpcoesNav) {
             const usuario = JSON.parse(usuarioString);
             
             btnEntrar.textContent = 'Sair';
@@ -330,17 +431,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
-        alert('Você foi desconectado.');
-        atualizarInterfaceUsuarioLogado();
+    async function logout() {
+        const refreshToken = getRefreshToken();
         
+        try {
+            if (refreshToken) {
+                await fetch('http://localhost:3000/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken })
+                });
+            }
+        } catch (erro) {
+            console.error('Erro ao fazer logout no servidor:', erro);
+        } finally {
+            // Remover tokens do cliente independentemente da resposta do servidor
+            removeAuthTokens();
+            alert('Você foi desconectado.');
+            atualizarInterfaceUsuarioLogado();
+        }
     }
 
    
     const btnEntrarInicial = document.getElementById('entrar');
-    if (btnEntrarInicial && !localStorage.getItem('token')) {
+    if (btnEntrarInicial && !getToken()) {
         const btnEntrarCloneInicial = btnEntrarInicial.cloneNode(true);
         btnEntrarInicial.parentNode.replaceChild(btnEntrarCloneInicial, btnEntrarInicial);
         
@@ -350,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Verificar token e atualizar interface ao carregar a página
     atualizarInterfaceUsuarioLogado();
 
     const params = new URLSearchParams(window.location.search);
@@ -357,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const novaUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, novaUrl);
         
-        if (!localStorage.getItem('token')) {
+        if (!getToken()) {
              abrirModalLogin();
         }
     }
@@ -365,8 +482,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDenunciarTela1 = document.querySelector('#tela1 button'); 
     const linkDenunciarTela4 = document.querySelector('a[href="../client/html/denuncia.html"]'); 
 
-    function verificarLoginParaDenuncia(event) {
-        if (!localStorage.getItem('token')) {
+    async function verificarLoginParaDenuncia(event) {
+        const tokenValido = await verificarToken();
+        if (!tokenValido) {
             event.preventDefault(); 
             alert('Você precisa estar logado para fazer uma denúncia.');
             abrirModalLogin();
@@ -380,8 +498,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 funcionalidadesSection.scrollIntoView({ behavior: 'smooth' });
             }
         });
-        btnDenunciarTela1.addEventListener('click', (e) => {
-            if (!localStorage.getItem('token')) {
+        btnDenunciarTela1.addEventListener('click', async (e) => {
+            const tokenValido = await verificarToken();
+            if (!tokenValido) {
                  e.preventDefault();
                  alert('Você precisa estar logado para fazer uma denúncia.');
                  abrirModalLogin();
