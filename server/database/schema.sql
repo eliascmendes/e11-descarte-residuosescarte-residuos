@@ -13,6 +13,9 @@ CREATE TABLE Denuncias (
     longitude DECIMAL(11, 8) NOT NULL,
     descricao TEXT NOT NULL,
     foto_url VARCHAR(255),
+    cidade VARCHAR(255) NOT NULL,
+    cep VARCHAR(20) NOT NULL,
+    rua VARCHAR(255) NOT NULL,
     status ENUM('pendente', 'em andamento', 'resolvido') DEFAULT 'pendente',
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
