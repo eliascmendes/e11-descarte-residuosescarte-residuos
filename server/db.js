@@ -78,6 +78,7 @@ async function deleteUsuario(id) {
 
 // Exporta as funções para que possam ser usadas em outros arquivos
 module.exports = {
+  connect,
   selectUsuarios,
   selectUsuarioPorEmail,
   insertUsuario,
