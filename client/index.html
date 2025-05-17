@@ -8,27 +8,27 @@
 </head>
 <body>
     <nav>
-        <a href="#tela1" id="nome_projeto">Nome do projeto</a>
+        <a href="#tela1" id="nome_projeto">EcoVigia</a>
         <div class="opcoes_nav">
             <a href="#tela3">Funcionalidades</a>
-            <a href="#tela4">Como Funciona</a>
+            <a href="html/denuncia.html">Denunciar</a>
+            <a href="html/votos.html">Votar</a>
             <a href="#tela5">Equipe</a>
-            <a href="#rodape">Contato</a>
             <button id="entrar">Entrar</button>
         </div>
     </nav>
     <!-- Tela inicial -->
     <section id="tela1">
         <div class="conteudo_esquerdo">
-            <div>
-                <h1>Juntos contra o descarte irregular</h1>
-                <p>Nossa plataforma comunitária permite que você 
-                    denuncie pontos de descarte irregular de resíduos 
-                    em sua cidade, acompanhe a resolução de 
-                    problemas e colabore com sua comunidade para um 
-                    ambiente mais limpo e saudável.</p>
-                <button>Denuncie um problema</button>
-            </div>
+            <h1>Juntos contra o descarte irregular</h1>
+            <p>Nossa plataforma comunitária permite que você 
+                denuncie pontos de descarte irregular de resíduos 
+                em sua cidade, acompanhe a resolução de 
+                problemas e colabore com sua comunidade para um 
+                ambiente mais limpo e saudável.</p>
+            <button onclick="window.location.href='html/denuncia.html'">Denuncie um problema</button>
+        </div>
+        <div class="conteudo_direito">
         </div>
     </section>
     <!-- Tela de cadastro -->
@@ -39,7 +39,7 @@
                 <p>Junte-se à nossa comunidade e ajude a transformar sua cidade em um lugar mais limpo e sustentável.</p>
                 
                 <div class="feature">
-                    <div class="icon-circle">
+                    <div class="icon-circle" style="background-color: #dcfce7;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.1083 15.875L11.4417 4.20832C11.2963 3.95182 11.0855 3.73847 10.8308 3.59004C10.576 3.44161 10.2865 3.3634 9.99167 3.3634C9.69685 3.3634 9.4073 3.44161 9.15257 3.59004C8.89783 3.73847 8.68703 3.95182 8.54167 4.20832L1.875 15.875C1.72807 16.1294 1.65103 16.4182 1.65168 16.7121C1.65233 17.0059 1.73065 17.2944 1.87871 17.5482C2.02676 17.802 2.23929 18.0121 2.49475 18.1573C2.7502 18.3025 3.03951 18.3776 3.33334 18.375H16.6667C16.9591 18.3747 17.2463 18.2975 17.4994 18.1511C17.7525 18.0047 17.9627 17.7942 18.1088 17.5409C18.2548 17.2876 18.3317 17.0003 18.3316 16.7079C18.3316 16.4155 18.2545 16.1282 18.1083 15.875Z" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M10 8.375V11.7083" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -53,7 +53,7 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="icon-circle">
+                    <div class="icon-circle" style="background-color: #e0f2fe;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -69,11 +69,11 @@
             </div>
             
             <div class="cadastro-form">
-                <h3>Crie sua conta</h3>
+                <h3>Crie sua conta gratuitamente</h3>
                 <form>
                     <div class="form-group">
                         <label for="nome">Nome completo</label>
-                        <input type="text" id="nome" placeholder="">
+                        <input type="text" id="nome" placeholder="Digite seu nome">
                     </div>
                     
                     <div class="form-group">
@@ -96,69 +96,51 @@
             </div>
         </div>
     </section>
-    <!-- Tela de funcionalidades (atualizada com estrutura da main) -->
+    <!-- Tela de funcionalidades -->
     <section id="tela3">
         <h1>Funcionalidades</h1>
         <div class="conteiner">
-            <div class="row-columm">
-                <a href="" class="card">
+            <div class="card">
+                <a href="#">
                     <img src="images/Container.png" alt="Ícone mapa">
                     <h4>Mapa Interativo</h4>
                     <p>Visualize e reporte pontos de descarte irregular em tempo real.</p>
                 </a>
-                <a href="" class="card">
+            </div>
+            <div class="card">
+                <a href="#">
                     <img src="images/upload.png" alt="Ícone upload">
                     <h4>Upload de Fotos</h4>
                     <p>Adicione evidências fotográficas para fortalecer sua denúncia.</p> 
                 </a>
             </div>
-            <div class="row-columm">
-                <a href="../client/html/votos.html" class="card">
+            <div class="card">
+                <a href="html/votos.html">
                     <img src="images/like.png" alt="Ícone votos">
                     <h4>Sistema de Votos</h4>
                     <p>Vote nas denúncias para priorizar os problemas mais urgentes.</p> 
                 </a>
             </div>
+            <div class="card">
+                <a href="#">
+                    <img src="images/grafico.png" alt="Ícone de comentários">
+                    <h4>Comentários</h4>
+                    <p>Discuta soluções e atualizações com outros membros da comunidade.</p> 
+                </a>
+            </div>
         </div>
     </section>
-    <!-- Seção "Como Funciona?" da main -->
-    <section id="tela4" class="secao-branca">
-        <h1>Como Funciona?</h1>
-        <div class="conteiner">
-            <a href="../client/html/denuncia.html" class="card ancora-menor">
-                <img src="images/alerta.png" alt="Ícone da denúncia">
-                <h4>Denunciar</h4>
-                <p>Registre um ponto de descarte irregular com fotos e localização no mapa.</p>
-            </a>
-            <a href="" class="card ancora-menor">
-                <img src="images/votos.png" alt="Ícone votos">
-                <h4>Sistema de Votos</h4>
-                <p>Vote nas denúncias para priorizar os problemas mais urgentes.</p> 
-            </a>
-            <a href="" class="card ancora-menor">
-                <img src="images/grafico.png" alt="Ícone de gráfico">
-                <h4>Acompanhar</h4>
-                <p>Acompanhe o progresso da resolução e atualizações da comunidade.</p> 
-            </a>
-        </div>
-    </section>
-    <!-- Outras seções -->
+    <!-- Nossa equipe -->
     <section id="tela5">
         <h1>Nossa Equipe</h1>
         <div class="equipe">
-            <div class="desenvolvedor">
-                <div class="icone_desenvolvedor">C</div>
-                <div class="conteudo_desenvolvedor">
-                    <a href="#">Caleb</a>
-                    <p>Desenvolvedor</p>
-                </div>
-            </div>
+           
 
             <div class="desenvolvedor">
                 <div class="icone_desenvolvedor">HM</div>
                 <div class="conteudo_desenvolvedor">
                     <a href="#">Hellem Mendonça</a>
-                    <p>Desenvolvedor</p>
+                    <p>Desenvolvedor Front-end</p>
                 </div>
             </div>
 
@@ -166,7 +148,7 @@
                 <div class="icone_desenvolvedor">MA</div>
                 <div class="conteudo_desenvolvedor">
                     <a href="#">Matheus Abreu</a>
-                    <p>Desenvolvedor</p>
+                    <p>Desenvolvedor Back-end</p>
                 </div>
             </div>
 
@@ -174,7 +156,7 @@
                 <div class="icone_desenvolvedor">RR</div>
                 <div class="conteudo_desenvolvedor">
                     <a href="#">Railton Rosa</a>
-                    <p>Desenvolvedor</p>
+                    <p>Desenvolvedor Back-end</p>
                 </div>
             </div>
 
@@ -182,7 +164,7 @@
                 <div class="icone_desenvolvedor">RB</div>
                 <div class="conteudo_desenvolvedor">
                     <a href="#">Raylan Bruno</a>
-                    <p>Desenvolvedor</p>
+                    <p>Desenvolvedor Front-end</p>
                 </div>
             </div>
 
@@ -190,12 +172,19 @@
                 <div class="icone_desenvolvedor">E</div>
                 <div class="conteudo_desenvolvedor">
                     <a href="#">Elias</a>
-                    <p>Desenvolvedor</p>
+                    <p>Desenvolvedor Back-end</p>
                 </div>
             </div>
         </div>
     </section>
-    <footer id="rodape"></footer>
+    <footer id="rodape">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">EcoVigia</div>
+                <p>© Plataforma Comunitária de Monitoramento de Resíduos</p>
+            </div>
+        </div>
+    </footer>
     <script src="js/main.js"></script>
 </body>
 </html>
