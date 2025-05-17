@@ -209,4 +209,27 @@ router.patch('/:id/status', isAuthenticated, isAdmin, validateStatus, async (req
   }
 });
 
+/**
+ * @swagger
+ * /denuncias/usuarios/{id}:
+ *   get:
+ *     summary: Lista denúncias de um usuário
+ *     tags: [Denúncias]
+ *     responses:
+ *       200:
+ *         description: Lista de denúncias do usuário
+ *       500:
+ *         description: Erro ao buscar denúncias
+ */
+router.get('/usuarios/:id', async (req, res) => {
+  try {
+    const usuarioId = req.params.id;
+    const denuncias = await db.getDenunciasPorUsuario(usuarioId);
+    res.json(denuncias);
+  } catch (error) {
+    console.error('Erro ao buscar denúncias do usuário:', error);
+    res.status(500).json({ error: 'Erro ao buscar denúncias do usuário' });
+  }
+});
+
 module.exports = router;
