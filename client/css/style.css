@@ -306,18 +306,14 @@ nav a:hover {
 }
 
 .conteiner {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
-  justify-content: center;
-  flex-wrap: wrap;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .conteiner .card {
-  flex: 1;
-  min-width: 280px;
-  max-width: 350px;
   background-color: white;
   border-radius: 12px;
   padding: 30px;
@@ -325,6 +321,8 @@ nav a:hover {
   border: 1px solid #f1f5f9;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
 }
 
 .conteiner .card:hover {
@@ -334,13 +332,14 @@ nav a:hover {
 
 .conteiner a {
   width: 100%;
-  height: auto;
+  height: 100%;
   text-decoration: none;
   color: #475569;
   display: flex;
   flex-direction: column;
   gap: 16px;
   align-items: center;
+  justify-content: center;
 }
 
 .conteiner a img {
@@ -352,12 +351,14 @@ nav a:hover {
 .conteiner h4 {
   color: #0f172a;
   font-size: 18px;
+  margin: 0;
 }
 
 .conteiner p {
   color: #64748b;
   font-size: 14px;
   line-height: 1.6;
+  margin: 0;
 }
 
 .ancora-menor {
@@ -391,10 +392,8 @@ nav a:hover {
 .equipe {
   width: 100%;
   max-width: 1200px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
 }
 
@@ -403,12 +402,12 @@ nav a:hover {
   flex-direction: row;
   align-items: center;
   border-radius: 12px;
-  width: 280px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   background-color: #fff;
   transition: transform 0.3s ease;
   border: 1px solid #f1f5f9;
+  height: 100%;
 }
 
 .desenvolvedor:hover {
@@ -419,6 +418,7 @@ nav a:hover {
 .icone_desenvolvedor {
   width: 40px;
   height: 40px;
+  min-width: 40px;
   color: white;
   font-size: 16px;
   display: flex;
@@ -454,6 +454,7 @@ nav a:hover {
 
 .conteudo_desenvolvedor {
   margin-left: 1rem;
+  overflow: hidden;
 }
 
 .conteudo_desenvolvedor a {
@@ -462,6 +463,10 @@ nav a:hover {
   font-weight: 600;
   font-size: 14px;
   transition: color 0.2s;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .conteudo_desenvolvedor a:hover {
@@ -630,6 +635,14 @@ nav a:hover {
     padding: 40px 20px;
   }
   
+  .conteiner {
+    grid-template-columns: 1fr;
+  }
+  
+  .equipe {
+    grid-template-columns: 1fr;
+  }
+  
   .cadastro-container {
     flex-direction: column;
   }
@@ -649,6 +662,16 @@ nav a:hover {
   
   .erro-container h2 {
     font-size: 2rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .conteiner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .equipe {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
