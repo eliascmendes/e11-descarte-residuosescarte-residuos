@@ -67,7 +67,7 @@
                 }
                 
                 try {
-                    const resposta = await fetch('http://localhost:3000/verificar-token', {
+                    const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -163,16 +163,20 @@
                     return;
                 }
                 
-                // Preparar dados da denúncia
-                const dadosDenuncia = {
-                    latitude: coordenadas.latitude,
-                    longitude: coordenadas.longitude,
-                    descricao: descricao,
-                    foto_url: fotoPreview.src || null,
-                    cidade: document.getElementById('cidade').textContent,
-                    cep: document.getElementById('cep').textContent,
-                    rua: document.getElementById('endereco').textContent
-                };
+                // Criar FormData para enviar arquivo e dados
+                const formData = new FormData();
+                formData.append('latitude', coordenadas.latitude);
+                formData.append('longitude', coordenadas.longitude);
+                formData.append('descricao', descricao);
+                formData.append('cidade', document.getElementById('cidade').textContent);
+                formData.append('cep', document.getElementById('cep').textContent);
+                formData.append('rua', document.getElementById('endereco').textContent);
+                
+                // Adicionar foto se existir
+                const fotoInput = document.getElementById('foto-input');
+                if (fotoInput.files.length > 0) {
+                    formData.append('foto', fotoInput.files[0]);
+                }
                 
                 // Enviar dados para o servidor com autenticação
                 try {
@@ -180,10 +184,9 @@
                     const resposta = await fetch('http://localhost:3000/denuncias', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify(dadosDenuncia)
+                        body: formData
                     });
                     
                     const dados = await resposta.json();
