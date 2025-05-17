@@ -77,8 +77,32 @@ async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_u
 // Votos
 async function votar(usuario_id, denuncia_id) {
   const conn = await connect();
-  const sql = 'INSERT INTO Votos (usuario_id, denuncia_id) VALUES (?, ?);';
-  await conn.query(sql, [usuario_id, denuncia_id]);
+  try {
+    
+    // Verificar se a denúncia existe
+    const [denuncia] = await conn.query('SELECT id FROM Denuncias WHERE id = ?', [denuncia_id]);
+    if (!denuncia || denuncia.length === 0) {
+      throw new Error('Denúncia não encontrada');
+    }
+    
+    // Verificar se o usuário existe
+    const [usuario] = await conn.query('SELECT id FROM Usuarios WHERE id = ?', [usuario_id]);
+    if (!usuario || usuario.length === 0) {
+      throw new Error('Usuário não encontrado');
+    }
+    
+    const sql = 'INSERT INTO Votos (usuario_id, denuncia_id) VALUES (?, ?);';
+    console.log('SQL Query:', sql);
+    console.log('Parâmetros:', [usuario_id, denuncia_id]);
+    
+    const [result] = await conn.query(sql, [usuario_id, denuncia_id]);
+    console.log('Resultado da inserção:', result);
+    
+    return result;
+  } catch (error) {
+    console.error('Erro ao registrar voto:', error);
+    throw error;
+  }
 }
 
 // Comentários

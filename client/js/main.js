@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/verificar-token', {
+            const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/refresh-token', {
+            const resposta = await fetch('http://localhost:3000/auth/refresh-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 try {
-                    const resposta = await fetch('http://localhost:3000/login', {
+                    const resposta = await fetch('http://localhost:3000/auth/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             if (refreshToken) {
-                await fetch('http://localhost:3000/logout', {
+                await fetch('http://localhost:3000/auth/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -23,7 +23,7 @@
                 }
                 
                 try {
-                    const resposta = await fetch('http://localhost:3000/verificar-token', {
+                    const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -65,10 +65,19 @@
                     denunciasContainer.innerHTML = '';
                     
                     // Adicionar cada denúncia ao container
-                    denuncias.forEach(denuncia => {
+                    for (const denuncia of denuncias) {
+                        // Buscar contagem de votos para cada denúncia
+                        const respostaVotos = await fetch(`http://localhost:3000/votos/denuncias/${denuncia.id}`);
+                        if (respostaVotos.ok) {
+                            const dadosVotos = await respostaVotos.json();
+                            denuncia.votos = dadosVotos.total;
+                        } else {
+                            denuncia.votos = 0;
+                        }
+                        
                         const card = criarCardDenuncia(denuncia);
                         denunciasContainer.appendChild(card);
-                    });
+                    }
                 } catch (erro) {
                     console.error('Erro:', erro);
                     denunciasContainer.innerHTML = '<div class="sem-denuncias">Erro ao carregar denúncias. Tente novamente mais tarde.</div>';
@@ -79,14 +88,16 @@
                 const card = document.createElement('div');
                 card.className = 'denuncia';
                 
+                // Construir URL completa para a foto
+                const fotoUrl = denuncia.foto_url 
+                    ? `http://localhost:3000${denuncia.foto_url}`
+                    : '../images/denuncia_exemplo.jpg';
+                
                 card.innerHTML = `
                     <h2>${denuncia.descricao || 'Denúncia sem título'}</h2>
                     <div class="denuncia_info">
                         <div class="imagem">
-                            ${denuncia.foto_url 
-                                ? `<img src="${denuncia.foto_url}" alt="Foto da denúncia">`
-                                : `<img src="../images/denuncia_exemplo.jpg" alt="Imagem padrão">`
-                            }
+                            <img src="${fotoUrl}" alt="Foto da denúncia">
                         </div>
                         <div class="denuncia_descricao">
                             <div class="denuncia_localizacao">${denuncia.cidade || 'Local não informado'}, ${denuncia.rua || ''}</div>
@@ -123,7 +134,7 @@
                 }
                 
                 try {
-                    const token = localStorage.getItem('token');
+                    const token = localStorage.getItem('token');     
                     const resposta = await fetch('http://localhost:3000/votos', {
                         method: 'POST',
                         headers: {
@@ -132,22 +143,28 @@
                         },
                         body: JSON.stringify({ denuncia_id: denunciaId })
                     });
-                    
+                     
                     const dados = await resposta.json();
+                    console.log('resposta:', dados);
                     
                     if (resposta.ok) {
                         botao.disabled = true;
                         botao.textContent = 'Votado';
-                        const contador = botao.parentNode.querySelector('.contagem_votos');
-                        const votos = parseInt(contador.textContent) + 1;
-                        contador.textContent = `${votos} votos`;
+                        
+                        // Buscar a nova contagem de votos
+                        const respostaVotos = await fetch(`http://localhost:3000/votos/denuncias/${denunciaId}`);
+                        if (respostaVotos.ok) {
+                            const dadosVotos = await respostaVotos.json();
+                            const contador = botao.parentNode.querySelector('.contagem_votos');
+                            contador.textContent = `${dadosVotos.total} votos`;
+                        }
                         
                         alert('Voto registrado com sucesso!');
                     } else {
-                        alert(`Erro: ${dados.erro}`);
+                        alert(`Erro: ${dados.error || dados.erro || 'Erro desconhecido'}`);
                     }
                 } catch (erro) {
-                    console.error('Erro:', erro);
+                    console.error('Erro detalhado:', erro);
                     alert('Ocorreu um erro ao registrar o voto. Tente novamente.');
                 }
             }
