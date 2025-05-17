@@ -139,6 +139,63 @@ async function updateDenunciaStatus(id, status) {
   await conn.query(query, [status, id]);
 }
 
+// Funções para votos
+async function checkVotoDuplicado(usuario_id, denuncia_id) {
+
+  const conn = await connect();
+  
+  try {
+    const [rows] = await conn.query(
+      'SELECT COUNT(*) as count FROM Votos WHERE usuario_id = ? AND denuncia_id = ?',
+      [usuario_id, denuncia_id]
+    );
+    console.log(rows);
+    
+    return rows[0].count > 0;
+  } catch (error) {
+    console.error('Erro ao verificar voto duplicado:', error);
+    throw error;
+  }
+}
+
+async function deleteVoto(id) {
+  const conn = await connect();
+  await conn.query('DELETE FROM Votos WHERE id = ?', [id]);
+}
+
+async function countVotosPorDenuncia(denuncia_id) {
+  const conn = await connect();
+  const [rows] = await conn.query(
+    'SELECT COUNT(*) as total FROM Votos WHERE denuncia_id = ?',
+    [denuncia_id]
+  );
+  return rows[0].total;
+}
+
+async function getVotosPorUsuario(usuario_id) {
+  const conn = await connect();
+  const [rows] = await conn.query(
+    'SELECT v.*, d.descricao as denuncia_descricao FROM Votos v JOIN Denuncias d ON v.denuncia_id = d.id WHERE v.usuario_id = ?',
+    [usuario_id]
+  );
+  return rows;
+}
+
+// Funções para denúncias
+async function getDenunciasPorUsuario(usuario_id) {
+  const conn = await connect();
+  try {
+    const [rows] = await conn.query(
+      'SELECT * FROM Denuncias WHERE usuario_id = ? ORDER BY data_criacao DESC',
+      [usuario_id]
+    );
+    return rows;
+  } catch (error) {
+    console.error('Erro ao buscar denúncias do usuário:', error);
+    throw error;
+  }
+}
+
 // Exporta as funções para que possam ser usadas em outros arquivos
 module.exports = {
   connect,
@@ -155,5 +212,10 @@ module.exports = {
   getDenunciaById,
   updateDenuncia,
   deleteDenuncia,
-  updateDenunciaStatus
+  updateDenunciaStatus,
+  checkVotoDuplicado,
+  deleteVoto,
+  countVotosPorDenuncia,
+  getVotosPorUsuario,
+  getDenunciasPorUsuario
 };
