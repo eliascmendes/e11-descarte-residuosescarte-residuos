@@ -3,7 +3,10 @@ const router = express.Router();
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { validateDenuncia, validateStatus } = require('../middleware/validation');
 const { checkDenunciaAccess } = require('../middleware/denunciaAccess');
+const upload = require('../middleware/upload');
 const db = require('../db');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * @swagger
@@ -75,48 +78,39 @@ router.get('/:id', async (req, res) => {
  *       500:
  *         description: Erro ao registrar denúncia
  */
-router.post('/', isAuthenticated, validateDenuncia, async (req, res) => {
-  const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
-  const usuario_id = req.usuario.id;
-
+router.post('/', isAuthenticated, upload.single('foto'), validateDenuncia, async (req, res) => {
   try {
-    console.log('Dados recebidos:', {
+    const { latitude, longitude, descricao, cidade, cep, rua } = req.body;
+    const usuario_id = req.usuario.id;
+
+    // Verifica se o diretório uploads existe, se não, cria
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    // Se houver uma foto, salva o caminho
+    let foto_url = null;
+    if (req.file) {
+      foto_url = `/uploads/${req.file.filename}`;
+      console.log('Arquivo salvo em:', path.join(uploadsDir, req.file.filename));
+    }
+
+    const denuncia = await db.insertDenuncia(
       usuario_id,
-      latitude,
-      longitude,
+      parseFloat(latitude),
+      parseFloat(longitude),
       descricao,
       foto_url,
       cidade,
       cep,
       rua
-    });
-
-    // Garantir que latitude e longitude sejam números
-    const lat = latitude ? parseFloat(latitude) : null;
-    const lng = longitude ? parseFloat(longitude) : null;
-
-    // URL cobaia pra armazenar as fotos
-    const tempFotoUrl = 'https://inova-equipe11/foto-denuncia.jpg';
-
-    await db.insertDenuncia(
-      usuario_id,
-      lat,
-      lng,
-      descricao,
-      tempFotoUrl, 
-      cidade,
-      cep,
-      rua
     );
-    
-    res.status(201).json({ mensagem: 'Denúncia registrada com sucesso!' });
-  } catch (err) {
-    console.error('Erro ao registrar denúncia:', err);
-    res.status(500).json({ 
-      erro: 'Erro ao registrar denúncia.',
-      detalhes: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+
+    res.status(201).json(denuncia);
+  } catch (error) {
+    console.error('Erro ao criar denúncia:', error);
+    res.status(500).json({ error: 'Erro ao criar denúncia' });
   }
 });
 
