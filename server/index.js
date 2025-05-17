@@ -341,22 +341,6 @@ app.delete('/usuarios/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/votos', isAuthenticated, async (req, res) => {
-  const { denuncia_id } = req.body;
-  const usuario_id = req.usuario.id;
-
-  if (!usuario_id || !denuncia_id) {
-    return res.status(400).json({ erro: 'ID do usuário e da denúncia são obrigatórios.' });
-  }
-
-  try {
-    await db.votar(usuario_id, denuncia_id);
-    res.status(201).json({ mensagem: 'Voto registrado com sucesso!' });
-  } catch (err) {
-    res.status(500).json({ erro: 'Erro ao registrar voto.', detalhes: err.message });
-  }
-});
-
 // importando as routes
 app.use('/denuncias', denunciasRouter);
 app.use('/votos', votosRouter);
