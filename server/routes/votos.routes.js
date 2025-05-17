@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { isAuthenticated } = require('../middleware/auth');
 
 console.log('rotas de votos carregadas');
 
@@ -10,6 +11,8 @@ console.log('rotas de votos carregadas');
  *   post:
  *     summary: Cria um novo voto
  *     tags: [Votos]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: Voto criado com sucesso
@@ -18,22 +21,34 @@ console.log('rotas de votos carregadas');
  *       500:
  *         description: Erro ao registrar voto
  */
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   try {
-    const { usuario_id, denuncia_id } = req.body;
+    console.log('Dados do usuário:', req.usuario); // Log dos dados do usuário
+    const usuario_id = req.usuario.id;
+    const { denuncia_id } = req.body;
+    
+    console.log('Dados recebidos:', { usuario_id, denuncia_id }); // Log dos dados recebidos
+    
+    if (!denuncia_id) {
+      console.log('Erro: ID da denúncia não fornecido');
+      return res.status(400).json({ error: 'ID da denúncia é obrigatório' });
+    }
     
     // Verificar se já existe um voto do mesmo usuário para esta denúncia
     const votoDuplicado = await db.checkVotoDuplicado(usuario_id, denuncia_id);
+    console.log('Voto duplicado:', votoDuplicado); // Log do resultado da verificação
     
     if (votoDuplicado) {
+      console.log('Erro: Usuário já votou nesta denúncia');
       return res.status(400).json({ error: 'Usuário já votou nesta denúncia' });
     }
 
     await db.votar(usuario_id, denuncia_id);
+    console.log('Voto registrado com sucesso');
     res.status(201).json({ message: 'Voto registrado com sucesso' });
   } catch (error) {
-    console.error('Erro ao registrar voto:', error);
-    res.status(500).json({ error: 'Erro ao registrar voto' });
+    console.error('Erro detalhado ao registrar voto:', error);
+    res.status(500).json({ error: 'Erro ao registrar voto', details: error.message });
   }
 });
 

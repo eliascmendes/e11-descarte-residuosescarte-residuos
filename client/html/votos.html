@@ -123,7 +123,7 @@
                 }
                 
                 try {
-                    const token = localStorage.getItem('token');
+                    const token = localStorage.getItem('token');     
                     const resposta = await fetch('http://localhost:3000/votos', {
                         method: 'POST',
                         headers: {
@@ -132,8 +132,9 @@
                         },
                         body: JSON.stringify({ denuncia_id: denunciaId })
                     });
-                    
+                     
                     const dados = await resposta.json();
+                    console.log('resposta:', dados);
                     
                     if (resposta.ok) {
                         botao.disabled = true;
@@ -144,10 +145,10 @@
                         
                         alert('Voto registrado com sucesso!');
                     } else {
-                        alert(`Erro: ${dados.erro}`);
+                        alert(`Erro: ${dados.error || dados.erro || 'Erro desconhecido'}`);
                     }
                 } catch (erro) {
-                    console.error('Erro:', erro);
+                    console.error('Erro detalhado:', erro);
                     alert('Ocorreu um erro ao registrar o voto. Tente novamente.');
                 }
             }
