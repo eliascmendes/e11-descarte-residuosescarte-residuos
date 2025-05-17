@@ -3,53 +3,82 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('./db');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
+const { isAuthenticated, isAdmin, JWT_SECRET } = require('./middleware/auth');
 
 const app = express();
-app.use(express.json());
 
+// Sets de limite de tamanho de requisição
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Configuração CORS 
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
-const JWT_SECRET = require('crypto').randomBytes(64).toString('hex');
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+// routes imports
+const denunciasRouter = require('./routes/denuncias.routes');
+const votosRouter = require('./routes/votos.routes');
+
 const REFRESH_TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex');
 
 let refreshTokens = [];
 
-// Middleware para verificar autenticação
-const isAuthenticated = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ erro: 'Acesso negado. Token não fornecido.' });
-  }
-  
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.usuario = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ erro: 'Token inválido ou expirado.' });
-  }
-};
+/**
+ * @swagger
+ * tags:
+ *   - name: Status
+ *     description: Endpoints de status
+ *   - name: Autenticação
+ *     description: Endpoints de autenticação
+ *   - name: Usuários
+ *     description: Endpoints de usuários
+ */
 
-// Middleware para verificar permissões de administrador
-const isAdmin = (req, res, next) => {
-  if (req.usuario && req.usuario.tipo === 'admin') {
-    next();
-  } else {
-    res.status(403).json({ erro: 'Acesso negado. Permissão de administrador necessária.' });
-  }
-};
-
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Verifica status do servidor
+ *     tags: [Status]
+ *     responses:
+ *       200:
+ *         description: Servidor funcionando
+ */
 app.get('/', (req, res) => {
   res.send('Servidor funcionando!');
 });
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Realiza login
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login realizado
+ */
 app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
   
@@ -101,6 +130,25 @@ app.post('/login', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /refresh-token:
+ *   post:
+ *     summary: Renova token
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token renovado
+ */
 app.post('/refresh-token', (req, res) => {
   const { refreshToken } = req.body;
   
@@ -128,6 +176,25 @@ app.post('/refresh-token', (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /logout:
+ *   post:
+ *     summary: Realiza logout
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       204:
+ *         description: Logout realizado
+ */
 app.post('/logout', (req, res) => {
   const { refreshToken } = req.body;
   
@@ -136,6 +203,18 @@ app.post('/logout', (req, res) => {
   res.status(204).send();
 });
 
+/**
+ * @swagger
+ * /verificar-token:
+ *   get:
+ *     summary: Verifica token
+ *     tags: [Autenticação]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token válido
+ */
 app.get('/verificar-token', isAuthenticated, (req, res) => {
   res.json({ 
     valido: true, 
@@ -143,6 +222,18 @@ app.get('/verificar-token', isAuthenticated, (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /usuarios:
+ *   get:
+ *     summary: Lista usuários
+ *     tags: [Usuários]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuários
+ */
 app.get('/usuarios', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const usuarios = await db.selectUsuarios();
@@ -152,6 +243,29 @@ app.get('/usuarios', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /usuarios:
+ *   post:
+ *     summary: Cadastra usuário
+ *     tags: [Usuários]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuário cadastrado
+ */
 app.post('/usuarios', async (req, res) => {
   const { nome, email, senha } = req.body;
 
@@ -227,31 +341,6 @@ app.delete('/usuarios/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/denuncias', async (req, res) => {
-  try {
-    const denuncias = await db.selectDenuncias();
-    res.json(denuncias);
-  } catch (err) {
-    res.status(500).json({ erro: 'Erro ao buscar denúncias', detalhes: err.message });
-  }
-});
-
-app.post('/denuncias', isAuthenticated, async (req, res) => {
-  const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
-  const usuario_id = req.usuario.id;
-
-  if (!usuario_id || !descricao) {
-    return res.status(400).json({ erro: 'Campos obrigatórios faltando.' });
-  }
-
-  try {
-    await db.insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url || null, cidade, cep, rua);
-    res.status(201).json({ mensagem: 'Denúncia registrada com sucesso!' });
-  } catch (err) {
-    res.status(500).json({ erro: 'Erro ao registrar denúncia.', detalhes: err.message });
-  }
-});
-
 app.post('/votos', isAuthenticated, async (req, res) => {
   const { denuncia_id } = req.body;
   const usuario_id = req.usuario.id;
@@ -267,7 +356,11 @@ app.post('/votos', isAuthenticated, async (req, res) => {
     res.status(500).json({ erro: 'Erro ao registrar voto.', detalhes: err.message });
   }
 });
-   
+
+// importando as routes
+app.use('/denuncias', denunciasRouter);
+app.use('/votos', votosRouter);
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
