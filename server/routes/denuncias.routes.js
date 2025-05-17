@@ -21,6 +21,8 @@ const db = require('../db');
  *     responses:
  *       200:
  *         description: Lista de denúncias
+ *       500:
+ *         description: Erro ao buscar denúncias
  */
 router.get('/', async (req, res) => {
   try {
@@ -37,15 +39,13 @@ router.get('/', async (req, res) => {
  *   get:
  *     summary: Busca uma denúncia específica
  *     tags: [Denúncias]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
  *     responses:
  *       200:
  *         description: Denúncia encontrada
+ *       404:
+ *         description: Denúncia não encontrada
+ *       500:
+ *         description: Erro ao buscar denúncia
  */
 router.get('/:id', async (req, res) => {
   try {
@@ -67,18 +67,13 @@ router.get('/:id', async (req, res) => {
  *     tags: [Denúncias]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               descricao:
- *                 type: string
  *     responses:
  *       201:
- *         description: Denúncia registrada
+ *         description: Denúncia registrada com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       500:
+ *         description: Erro ao registrar denúncia
  */
 router.post('/', isAuthenticated, validateDenuncia, async (req, res) => {
   const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
@@ -133,15 +128,15 @@ router.post('/', isAuthenticated, validateDenuncia, async (req, res) => {
  *     tags: [Denúncias]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
  *     responses:
  *       200:
- *         description: Denúncia atualizada
+ *         description: Denúncia atualizada com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado
+ *       500:
+ *         description: Erro ao atualizar denúncia
  */
 router.put('/:id', isAuthenticated, checkDenunciaAccess, validateDenuncia, async (req, res) => {
   const { id } = req.params;
@@ -163,15 +158,15 @@ router.put('/:id', isAuthenticated, checkDenunciaAccess, validateDenuncia, async
  *     tags: [Denúncias]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
  *     responses:
  *       200:
- *         description: Denúncia removida
+ *         description: Denúncia removida com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado
+ *       500:
+ *         description: Erro ao remover denúncia
  */
 router.delete('/:id', isAuthenticated, checkDenunciaAccess, async (req, res) => {
   const { id } = req.params;
@@ -192,15 +187,15 @@ router.delete('/:id', isAuthenticated, checkDenunciaAccess, async (req, res) => 
  *     tags: [Denúncias]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
  *     responses:
  *       200:
- *         description: Status atualizado
+ *         description: Status atualizado com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado - Apenas administradores
+ *       500:
+ *         description: Erro ao atualizar status
  */
 router.patch('/:id/status', isAuthenticated, isAdmin, validateStatus, async (req, res) => {
   const { id } = req.params;
