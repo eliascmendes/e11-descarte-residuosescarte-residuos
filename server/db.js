@@ -38,8 +38,40 @@ async function selectDenuncias() {
 
 async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua) {
   const conn = await connect();
-  const sql = 'INSERT INTO Denuncias (usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
-  await conn.query(sql, [usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua]);
+  try {
+    const sql = `
+      INSERT INTO Denuncias (
+        usuario_id, 
+        latitude, 
+        longitude, 
+        descricao, 
+        foto_url, 
+        cidade, 
+        cep, 
+        rua,
+        status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendente');
+    `;
+    
+    console.log('SQL Query:', sql);
+    console.log('Parâmetros:', [usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua]);
+    
+    const [result] = await conn.query(sql, [
+      usuario_id,
+      latitude,
+      longitude,
+      descricao,
+      foto_url,
+      cidade,
+      cep,
+      rua
+    ]);
+    
+    return result;
+  } catch (err) {
+    console.error('Erro na inserção da denúncia:', err);
+    throw new Error(`Erro ao inserir denúncia: ${err.message}`);
+  }
 }
 
 // Votos
@@ -76,6 +108,37 @@ async function deleteUsuario(id) {
   await conn.query('DELETE FROM usuarios WHERE id = ?;', [id]);
 }
 
+// Funções para denúncias
+async function getDenunciaById(id) {
+  const conn = await connect();
+  const query = 'SELECT * FROM denuncias WHERE id = ?';
+  const [rows] = await conn.query(query, [id]);
+  return rows[0];
+}
+
+async function updateDenuncia(id, latitude, longitude, descricao, foto_url, cidade, cep, rua) {
+  const conn = await connect();
+  const query = `
+    UPDATE denuncias 
+    SET latitude = ?, longitude = ?, descricao = ?, foto_url = ?, 
+        cidade = ?, cep = ?, rua = ?, updated_at = NOW()
+    WHERE id = ?
+  `;
+  await conn.query(query, [latitude, longitude, descricao, foto_url, cidade, cep, rua, id]);
+}
+
+async function deleteDenuncia(id) {
+  const conn = await connect();
+  const query = 'DELETE FROM denuncias WHERE id = ?';
+  await conn.query(query, [id]);
+}
+
+async function updateDenunciaStatus(id, status) {
+  const conn = await connect();
+  const query = 'UPDATE denuncias SET status = ?, updated_at = NOW() WHERE id = ?';
+  await conn.query(query, [status, id]);
+}
+
 // Exporta as funções para que possam ser usadas em outros arquivos
 module.exports = {
   connect,
@@ -88,5 +151,9 @@ module.exports = {
   comentar,
   getUsuarioById,
   updateUsuario,
-  deleteUsuario
+  deleteUsuario,
+  getDenunciaById,
+  updateDenuncia,
+  deleteDenuncia,
+  updateDenunciaStatus
 };
