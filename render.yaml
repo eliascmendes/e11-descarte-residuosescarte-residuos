@@ -20,7 +20,7 @@ services:
     staticPublishPath: client
     autoDeploy: true
 
-# Opcional: banco gerenciado MySQL
+# banco gerenciado MySQL
 databases:
   - name: ecovigia-db
     plan: free
