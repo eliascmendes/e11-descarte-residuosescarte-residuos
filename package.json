@@ -11,5 +11,13 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "main": "server/index.js",
+  "engines": {
+    "node": "^18.0.0"
   }
 }
