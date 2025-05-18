@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
+require('dotenv').config();
 
 const app = express();
 
@@ -17,6 +20,9 @@ app.use(express.json());
 // Servir arquivos de img estáticos da pasta uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Documentação Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 // Rotas
 const denunciasRoutes = require('./routes/denuncias.routes');
 const votosRoutes = require('./routes/votos.routes');
@@ -32,7 +38,19 @@ app.use('/comentarios', comentariosRoutes);
 
 // Rota de status do servidor
 app.get('/status', (req, res) => {
-    res.json({ status: 'online' });
+    res.json({ 
+        status: 'online',
+        ambiente: process.env.NODE_ENV || 'desenvolvimento',
+        versao: process.env.npm_package_version || '1.0.0'
+    });
+});
+
+// Rota base
+app.get('/', (req, res) => {
+    res.json({ 
+        mensagem: 'API EcoVigia está funcionando!',
+        documentacao: '/api-docs'
+    });
 });
 
 // Iniciar o servidor

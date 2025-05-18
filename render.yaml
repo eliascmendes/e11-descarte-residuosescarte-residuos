@@ -23,6 +23,5 @@ services:
 # Opcional: banco gerenciado MySQL
 databases:
   - name: ecovigia-db
-    type: mysql
     plan: free
     ipAllowList: [] 
