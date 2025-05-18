@@ -2,7 +2,7 @@ services:
   - type: web
     name: ecovigia-api
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: "npm install"
     startCommand: "npm start"
     envVars:
@@ -16,7 +16,6 @@ services:
   - type: web
     name: ecovigia-site
     runtime: static
-    plan: starter
     buildCommand: ""
     staticPublishPath: client
     autoDeploy: true
