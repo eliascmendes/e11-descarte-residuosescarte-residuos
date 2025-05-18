@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ecovigia-api
+    runtime: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: DATABASE_URL
+        sync: false 
+      - key: CLIENT_URL
+        value: https://ecovigia-site.onrender.com
+    autoDeploy: true
+    rootDir: .
+
+  - type: static
+    name: ecovigia-site
+    plan: free
+    buildCommand: ""
+    staticPublishPath: client
+    autoDeploy: true
+
+# Opcional: banco gerenciado MySQL
+# databases:
+#   - name: ecovigia-db
+#     plan: free
+#     ipAllowList: [] 

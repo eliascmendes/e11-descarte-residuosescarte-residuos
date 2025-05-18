@@ -4,7 +4,9 @@ async function connect() {
   if (global.connection && global.connection.state !== 'disconnected')
     return global.connection;
 
-  const connection = await mysql.createConnection("mysql://root:admin123@localhost:3306/residuos_db");
+  const databaseUrl = process.env.DATABASE_URL || "mysql://root:admin123@localhost:3306/residuos_db";
+
+  const connection = await mysql.createConnection(databaseUrl);
   console.log("Conectado ao MySQL!");
   global.connection = connection;
   return connection;
