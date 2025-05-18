@@ -1,4 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async function() {
+    let API_BASE_URL;
+    
+    try {
+        const module = await import('./config/api.js');
+        API_BASE_URL = module.default;
+    } catch (error) {
+        console.error('Erro ao carregar configuração da API:', error);
+        API_BASE_URL = 'https://ecovigia-api.onrender.com'; // Fallback
+    }
+    
     const links = document.querySelectorAll('nav a[href^="#"]');
     links.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -62,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (isValid) {
                 try {
-                    const resposta = await fetch('http://localhost:3000/usuarios', {
+                    const resposta = await fetch(`${API_BASE_URL}/usuarios`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -164,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/verificar-token`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -190,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/refresh-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -355,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 try {
-                    const resposta = await fetch('http://localhost:3000/auth/login', {
+                    const resposta = await fetch(`${API_BASE_URL}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -436,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             if (refreshToken) {
-                await fetch('http://localhost:3000/auth/logout', {
+                await fetch(`${API_BASE_URL}/auth/logout`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
