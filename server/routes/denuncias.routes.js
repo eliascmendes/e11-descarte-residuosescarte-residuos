@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const { verificarToken, isAdmin } = require('../middleware/auth');
 const { validateDenuncia, validateStatus } = require('../middleware/validation');
 const { checkDenunciaAccess } = require('../middleware/denunciaAccess');
 const upload = require('../middleware/upload');
@@ -78,7 +78,7 @@ router.get('/:id', async (req, res) => {
  *       500:
  *         description: Erro ao registrar denúncia
  */
-router.post('/', isAuthenticated, upload.single('foto'), validateDenuncia, async (req, res) => {
+router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async (req, res) => {
   try {
     const { latitude, longitude, descricao, cidade, cep, rua } = req.body;
     const usuario_id = req.usuario.id;
@@ -132,7 +132,7 @@ router.post('/', isAuthenticated, upload.single('foto'), validateDenuncia, async
  *       500:
  *         description: Erro ao atualizar denúncia
  */
-router.put('/:id', isAuthenticated, checkDenunciaAccess, validateDenuncia, async (req, res) => {
+router.put('/:id', verificarToken, checkDenunciaAccess, validateDenuncia, async (req, res) => {
   const { id } = req.params;
   const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
 
@@ -162,7 +162,7 @@ router.put('/:id', isAuthenticated, checkDenunciaAccess, validateDenuncia, async
  *       500:
  *         description: Erro ao remover denúncia
  */
-router.delete('/:id', isAuthenticated, checkDenunciaAccess, async (req, res) => {
+router.delete('/:id', verificarToken, checkDenunciaAccess, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -191,7 +191,7 @@ router.delete('/:id', isAuthenticated, checkDenunciaAccess, async (req, res) => 
  *       500:
  *         description: Erro ao atualizar status
  */
-router.patch('/:id/status', isAuthenticated, isAdmin, validateStatus, async (req, res) => {
+router.patch('/:id/status', verificarToken, isAdmin, validateStatus, async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 

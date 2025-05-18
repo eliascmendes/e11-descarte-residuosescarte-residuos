@@ -21,11 +21,13 @@ const denunciasRoutes = require('./routes/denuncias.routes');
 const votosRoutes = require('./routes/votos.routes');
 const authRoutes = require('./routes/auth.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
+const comentariosRoutes = require('./routes/comentarios.routes');
 
 app.use('/denuncias', denunciasRoutes);
 app.use('/votos', votosRoutes);
 app.use('/auth', authRoutes);
 app.use('/usuarios', usuariosRoutes);
+app.use('/comentarios', comentariosRoutes);
 
 // Rota de status do servidor
 app.get('/status', (req, res) => {
