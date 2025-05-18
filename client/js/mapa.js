@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Importar a configuração da API
+    let API_BASE_URL;
+    
+    try {
+        const module = await import('./config/api.js');
+        API_BASE_URL = module.default;
+    } catch (error) {
+        console.error('Erro ao carregar configuração da API:', error);
+        API_BASE_URL = 'https://ecovigia-api.onrender.com'; // Fallback
+    }
+    
     const mapaLoading = document.getElementById('mapa-loading');
     const btnAtualizar = document.getElementById('atualizar-mapa');
     
@@ -75,10 +86,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             limparMarcadores();
             
-            const resposta = await fetch('http://localhost:3000/denuncias');
+            const resposta = await fetch(`${API_BASE_URL}/denuncias`);
             
             if (!resposta.ok) {
-                throw new Error('Erro ao buscar denúncias');
+                throw new Error('Falha ao buscar denúncias');
             }
             
             const denuncias = await resposta.json();
@@ -150,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Adiciona a imagem ao popup se disponível
         if (denuncia.foto_url) {
-            conteudoPopup += `<img src="http://localhost:3000${denuncia.foto_url}" alt="Foto da denúncia">`;
+            conteudoPopup += `<img src="${API_BASE_URL}${denuncia.foto_url}" alt="Foto da denúncia">`;
         }
         
         conteudoPopup += `</div>`;
@@ -179,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/verificar-token`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -200,11 +211,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const refreshToken = localStorage.getItem('refreshToken');
         
         if (!refreshToken) {
+            removeAuthTokens();
             return false;
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/refresh-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -271,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         try {
             if (refreshToken) {
-                await fetch('http://localhost:3000/auth/logout', {
+                await fetch(`${API_BASE_URL}/auth/logout`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -410,7 +422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 try {
-                    const resposta = await fetch('http://localhost:3000/auth/login', {
+                    const resposta = await fetch(`${API_BASE_URL}/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
