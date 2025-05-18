@@ -19,6 +19,9 @@
             
             <div id="mapa" style="height: 300px; margin-bottom: 20px; border-radius: 8px;"></div>
             
+            <!-- Botão para capturar a localização do usuário -->
+            <button id="obter-localizacao" type="button" class="botao-localizacao">Usar minha localização</button>
+            
             <div id="form-container">
                 <div class="form-grupo">
                     <label for="descricao">Descrição do problema</label>
@@ -201,6 +204,46 @@
                     console.error('Erro:', erro);
                     alert('Ocorreu um erro ao enviar a denúncia. Tente novamente.');
                 }
+            });
+
+            // Capturar localização do usuário ao clicar no botão
+            document.getElementById('obter-localizacao').addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    alert('Seu navegador não suporta geolocalização.');
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition((posicao) => {
+                    const lat = posicao.coords.latitude;
+                    const lng = posicao.coords.longitude;
+
+                    mapa.setView([lat, lng], 15);
+                    if (marcador) {
+                        mapa.removeLayer(marcador);
+                    }
+                    marcador = L.marker([lat, lng]).addTo(mapa);
+                    coordenadas = {
+                        latitude: lat,
+                        longitude: lng
+                    };
+
+                    // Buscar informações do endereço pela API
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const address = data.address;
+                            document.getElementById('endereco').textContent = address.road || address.pedestrian || 'Endereço não disponível';
+                            document.getElementById('cidade').textContent = address.city || address.town || address.village || 'Não disponível';
+                            document.getElementById('cep').textContent = address.postcode || 'Não disponível';
+                        })
+                        .catch(err => {
+                            console.error('Erro ao obter endereço:', err);
+                            document.getElementById('endereco').textContent = 'Erro ao obter endereço';
+                        });
+                }, (erro) => {
+                    console.warn(`Erro ao obter localização: ${erro.message}`);
+                    alert('Não foi possível obter sua localização. Tente novamente.');
+                });
             });
         });
     </script>

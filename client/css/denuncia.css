@@ -56,3 +56,12 @@
 .tela button:hover {
   background-color: #388e3c;
 }
+
+/* Botão de localização */
+.botao-localizacao {
+  background-color: #3b82f6;
+}
+
+.botao-localizacao:hover {
+  background-color: #2563eb;
+}
