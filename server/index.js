@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
 const denunciasRoutes = require('./routes/denuncias.routes');
 const comentariosRoutes = require('./routes/comentarios.routes');
+const votosRoutes = require('./routes/votos.routes');
 
 // URL de conexão para o PostgreSQL
 const databaseUrl = process.env.DATABASE_URL || "postgresql://ecovigia_db_user:btRPsATAwCC19EjuQmPAbkbIykpvLk54@dpg-d0l0iv2dbo4c73b6rci0-a/ecovigia_db";
@@ -71,6 +72,7 @@ app.use('/auth', authRoutes);
 app.use('/usuarios', usuariosRoutes);
 app.use('/denuncias', denunciasRoutes);
 app.use('/comentarios', comentariosRoutes);
+app.use('/votos', votosRoutes);
 
 // Inicializar o banco e iniciar o servidor
 initDatabase()
