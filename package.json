@@ -1,7 +1,7 @@
 {
-  "name": "ecovigia-api",
+  "name": "ecovigia",
   "version": "1.0.0",
-  "description": "API para gerenciamento de denúncias de descarte irregular de resíduos",
+  "description": "",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
@@ -16,10 +16,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "install": "^0.13.0",
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
-    "npm": "^11.4.0",
     "pg": "^8.10.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2"
