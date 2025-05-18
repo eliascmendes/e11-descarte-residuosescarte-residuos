@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    let API_BASE_URL;
+    try {
+        const module = await import('./config/api.js');
+        API_BASE_URL = module.default;
+    } catch (error) {
+        console.error('Erro ao carregar configuração da API:', error);
+        API_BASE_URL = 'https://ecovigia-api.onrender.com';
+    }
+    
     // Se estamos na página de voto, não verificamos a autenticação
     const emPaginaVoto = window.location.pathname.includes('/voto.html');
     let todasDenuncias = [];
@@ -11,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/verificar-token`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -38,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     async function carregarDenuncias() {
         try {
-            const resposta = await fetch('http://localhost:3000/denuncias');
+            const resposta = await fetch(`${API_BASE_URL}/denuncias`);
             
             if (!resposta.ok) {
                 throw new Error('Erro ao carregar denúncias');
@@ -55,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             for (const denuncia of denuncias) {
                 // Buscar contagem de votos para cada denúncia
-                const respostaVotos = await fetch(`http://localhost:3000/votos/denuncias/${denuncia.id}`);
+                const respostaVotos = await fetch(`${API_BASE_URL}/votos/denuncias/${denuncia.id}`);
                 if (respostaVotos.ok) {
                     const dadosVotos = await respostaVotos.json();
                     denuncia.votos = dadosVotos.total;
@@ -64,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 
                 // Buscar comentários para cada denúncia
-                const respostaComentarios = await fetch(`http://localhost:3000/comentarios/denuncias/${denuncia.id}`);
+                const respostaComentarios = await fetch(`${API_BASE_URL}/comentarios/denuncias/${denuncia.id}`);
                 if (respostaComentarios.ok) {
                     const dadosComentarios = await respostaComentarios.json();
                     denuncia.comentarios = dadosComentarios;
@@ -93,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // URL completa para a foto
         const fotoUrl = denuncia.foto_url 
-            ? `http://localhost:3000${denuncia.foto_url}`
+            ? `${API_BASE_URL}${denuncia.foto_url}`
             : '../images/denuncia_exemplo.jpg';
         
         // Formatar descrição para mostrar
@@ -192,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             try {
-                const resposta = await fetch('http://localhost:3000/comentarios', {
+                const resposta = await fetch(`${API_BASE_URL}/comentarios`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -263,7 +272,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         try {   
-            const resposta = await fetch('http://localhost:3000/votos', {
+            const resposta = await fetch(`${API_BASE_URL}/votos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -279,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 botao.classList.add('votado');
                 
                 // Buscar a nova contagem de votos
-                const respostaVotos = await fetch(`http://localhost:3000/votos/denuncias/${denunciaId}`);
+                const respostaVotos = await fetch(`${API_BASE_URL}/votos/denuncias/${denunciaId}`);
                 if (respostaVotos.ok) {
                     const dadosVotos = await respostaVotos.json();
                     const contador = botao.querySelector('.contagem');

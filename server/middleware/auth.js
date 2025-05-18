@@ -21,7 +21,7 @@ const verificarToken = (req, res, next) => {
 
 // Middleware para verificar permissões de administrador
 const isAdmin = (req, res, next) => {
-  if (!req.usuario || !req.usuario.is_admin) {
+  if (!req.usuario || req.usuario.tipo !== 'administrador') {
     return res.status(403).json({ error: 'Acesso negado. Apenas administradores.' });
   }
   next();

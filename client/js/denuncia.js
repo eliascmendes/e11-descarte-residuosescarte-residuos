@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    let API_BASE_URL;
+    try {
+        const module = await import('./config/api.js');
+        API_BASE_URL = module.default;
+    } catch (error) {
+        console.error('Erro ao carregar configuração da API:', error);
+        API_BASE_URL = 'https://ecovigia-api.onrender.com'; 
+    }
+    
     // Verificar autenticação antes de permitir acesso à página
     async function verificarToken() {
         const token = localStorage.getItem('token');
@@ -8,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         try {
-            const resposta = await fetch('http://localhost:3000/auth/verificar-token', {
+            const resposta = await fetch(`${API_BASE_URL}/auth/verificar-token`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -186,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Enviar dados para o servidor com autenticação
         try {
             const token = localStorage.getItem('token');
-            const resposta = await fetch('http://localhost:3000/denuncias', {
+            const resposta = await fetch(`${API_BASE_URL}/denuncias`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
