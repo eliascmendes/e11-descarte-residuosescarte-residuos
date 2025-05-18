@@ -13,8 +13,9 @@ services:
     autoDeploy: true
     rootDir: .
 
-  - type: static
+  - type: web
     name: ecovigia-site
+    runtime: static
     plan: free
     buildCommand: ""
     staticPublishPath: client
