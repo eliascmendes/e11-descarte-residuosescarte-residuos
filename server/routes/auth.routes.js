@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
-const { isAuthenticated, isAdmin, JWT_SECRET } = require('../middleware/auth');
+const { verificarToken, isAdmin, JWT_SECRET } = require('../middleware/auth');
 
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh-token-secret-dev';
 let refreshTokens = [];
@@ -165,7 +165,7 @@ router.post('/logout', (req, res) => {
  *       200:
  *         description: Token válido
  */
-router.get('/verificar-token', isAuthenticated, (req, res) => {
+router.get('/verificar-token', verificarToken, (req, res) => {
   res.json({ 
     valido: true, 
     usuario: req.usuario 

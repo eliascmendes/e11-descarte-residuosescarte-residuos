@@ -112,6 +112,39 @@ async function comentar(usuario_id, denuncia_id, texto) {
   await conn.query(sql, [usuario_id, denuncia_id, texto]);
 }
 
+// Função para buscar comentários de uma denúncia específica
+async function getComentariosPorDenuncia(denuncia_id) {
+  const conn = await connect();
+  try {
+    const [rows] = await conn.query(`
+      SELECT c.*, u.nome as usuario 
+      FROM Comentarios c 
+      JOIN Usuarios u ON c.usuario_id = u.id 
+      WHERE c.denuncia_id = ? 
+      ORDER BY c.data_comentario DESC
+    `, [denuncia_id]);
+    return rows;
+  } catch (error) {
+    console.error('Erro ao buscar comentários da denúncia:', error);
+    throw error;
+  }
+}
+
+// Função para excluir um comentário (Implementação incompleta no projeto)
+async function deleteComentario(id, usuario_id) {
+  const conn = await connect();
+  try {
+    const [rows] = await conn.query(
+      'DELETE FROM Comentarios WHERE id = ? AND usuario_id = ?',
+      [id, usuario_id]
+    );
+    return rows.affectedRows > 0;
+  } catch (error) {
+    console.error('Erro ao excluir comentário:', error);
+    throw error;
+  }
+}
+
 // Função para buscar um usuário específico pelo ID
 async function getUsuarioById(id) {
   const conn = await connect();
@@ -241,5 +274,7 @@ module.exports = {
   deleteVoto,
   countVotosPorDenuncia,
   getVotosPorUsuario,
-  getDenunciasPorUsuario
+  getDenunciasPorUsuario,
+  getComentariosPorDenuncia,
+  deleteComentario
 };

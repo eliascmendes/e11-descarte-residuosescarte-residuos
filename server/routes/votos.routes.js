@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { isAuthenticated } = require('../middleware/auth');
+const { verificarToken } = require('../middleware/auth');
 
 console.log('rotas de votos carregadas');
 
@@ -21,7 +21,7 @@ console.log('rotas de votos carregadas');
  *       500:
  *         description: Erro ao registrar voto
  */
-router.post('/', isAuthenticated, async (req, res) => {
+router.post('/', verificarToken, async (req, res) => {
   try {
     console.log('Dados do usuário:', req.usuario); // Log dos dados do usuário
     const usuario_id = req.usuario.id;

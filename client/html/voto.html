@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/listadenuncias.css">
+    <style>
+        body {
+            align-items: stretch;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .conteudo-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            flex: 1;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .header-section h1 {
+            color: #1e6f5c;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .header-section p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+    </style>
+    <title>Votar em Denúncias</title>
+</head>
+<body>
+    <nav>
+        <a href="../index.html" id="nome_projeto">EcoVigia</a>
+        <div class="opcoes_nav">
+            <a href="../index.html#tela3">Funcionalidades</a>
+            <a href="denuncia.html">Denunciar</a>
+            <a href="mapa.html">Mapa</a>
+            <a href="voto.html">Votar</a>
+            <a href="../index.html#tela5">Equipe</a>
+            <button id="entrar">Entrar</button>
+        </div>
+    </nav>
+
+    <div class="conteudo-principal">
+        <div class="header-section">
+            <h1>Votar em Denúncias</h1>
+            <p>Sua opinião é importante! Vote nas denúncias abaixo para ajudar a priorizar as que precisam de atenção urgente. As denúncias com mais votos têm maior visibilidade para as autoridades responsáveis.</p>
+        </div>
+
+        <div class="tela_denuncias" id="denuncias-container">
+            <div class="sem-denuncias">Carregando denúncias...</div>
+        </div>
+    </div>
+
+    <footer id="rodape">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">EcoVigia</div>
+                <p>© Plataforma Comunitária de Monitoramento de Resíduos</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/listadenuncias.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 

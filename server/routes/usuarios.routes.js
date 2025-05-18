@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const { verificarToken, isAdmin } = require('../middleware/auth');
 
 /**
  * @swagger
@@ -16,7 +16,7 @@ const { isAuthenticated, isAdmin } = require('../middleware/auth');
  *       200:
  *         description: Lista de usuários
  */
-router.get('/', isAuthenticated, isAdmin, async (req, res) => {
+router.get('/', verificarToken, isAdmin, async (req, res) => {
   try {
     const usuarios = await db.selectUsuarios();
     res.json(usuarios);
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Usuário encontrado
  */
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.get('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
   if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
@@ -109,7 +109,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
  *       200:
  *         description: Usuário atualizado
  */
-router.put('/:id', isAuthenticated, async (req, res) => {
+router.put('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
   if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
@@ -143,7 +143,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
  *       200:
  *         description: Usuário removido
  */
-router.delete('/:id', isAuthenticated, async (req, res) => {
+router.delete('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
   if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {

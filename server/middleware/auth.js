@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta';
 
 // Middleware para verificar processos de autenticação
-const isAuthenticated = (req, res, next) => {
+const verificarToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   
   if (!token) {
@@ -27,4 +27,4 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = { isAuthenticated, isAdmin, JWT_SECRET }; 
+module.exports = { verificarToken, isAdmin, JWT_SECRET }; 
