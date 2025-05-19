@@ -542,3 +542,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
 }); 
+
+//animação do menu
+class MobileNavbar{
+    constructor(){
+        this.mobileMenu = document.querySelector(".menu_mobile");
+        this.navlist = document.querySelector(".opcoes_nav");
+        this.navlinks = document.querySelectorAll(".opcoes_nav a");
+        this.activeClass = "active";
+
+        this.handleCLick = this.handleCLick.bind(this);
+    }
+
+    handleCLick(){
+        this.navlist.classList.toggle(this.activeClass);
+    }
+
+    addClickEvent(){
+        this.mobileMenu.addEventListener("click", this.handleCLick);
+    }
+
+    init(){
+        if(this.mobileMenu){
+            this.addClickEvent();
+        }
+        return this;
+    }
+}
+
+const mobileNavbar = new MobileNavbar();
+
+mobileNavbar.init();

@@ -43,7 +43,17 @@ nav a {
 nav a:hover {
   color: #22c55e;
 }
-
+/*menu para telas pequenas*/
+.menu_mobile{
+  cursor: pointer;
+  display: none;
+}
+.menu_mobile div{
+  width: 32px;
+  height: 2px;
+  background-color: #475569;
+  margin: 8px;
+}
 /*Deixar as opções de navegação alinhados horizontalmente*/
 .opcoes_nav {
   display: flex;
@@ -611,14 +621,31 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
+  body{
+    overflow-x: hidden;
+  }
   nav {
     padding: 16px 20px;
   }
   
   .opcoes_nav {
-    display: none;
+    position: absolute;
+    top: 8vh;
+    right: 0;
+    width: 50vw;
+    height: 92vh;
+    background-color: white;
+    flex-direction: column;
+    align-items: flex-start;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in;
   }
-  
+  .menu_mobile{
+    display: block;
+  }
+  .opcoes_nav.active{
+    transform: translateX(0);
+  }
   #tela1 {
     padding: 40px 20px;
   }
