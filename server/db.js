@@ -56,7 +56,7 @@ async function selectDenuncias() {
   return rows;
 }
 
-async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua) {
+async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro) {
   const conn = await connect();
   try {
     const sql = `
@@ -69,13 +69,14 @@ async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_u
         cidade, 
         cep, 
         rua,
+        bairro,
         status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pendente')
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pendente')
       RETURNING *;
     `;
     
     console.log('SQL Query:', sql);
-    console.log('Parâmetros:', [usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua]);
+    console.log('Parâmetros:', [usuario_id, latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro]);
     
     const { rows } = await conn.query(sql, [
       usuario_id,
@@ -85,7 +86,8 @@ async function insertDenuncia(usuario_id, latitude, longitude, descricao, foto_u
       foto_url,
       cidade,
       cep,
-      rua
+      rua,
+      bairro
     ]);
     
     return rows[0];
@@ -195,15 +197,15 @@ async function getDenunciaById(id) {
   return rows[0];
 }
 
-async function updateDenuncia(id, latitude, longitude, descricao, foto_url, cidade, cep, rua) {
+async function updateDenuncia(id, latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro) {
   const conn = await connect();
   const query = `
     UPDATE denuncias 
     SET latitude = $1, longitude = $2, descricao = $3, foto_url = $4, 
-        cidade = $5, cep = $6, rua = $7, updated_at = NOW()
-    WHERE id = $8
+        cidade = $5, cep = $6, rua = $7, bairro = $8, updated_at = NOW()
+    WHERE id = $9
   `;
-  await conn.query(query, [latitude, longitude, descricao, foto_url, cidade, cep, rua, id]);
+  await conn.query(query, [latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro, id]);
 }
 
 async function deleteDenuncia(id) {

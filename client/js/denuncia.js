@@ -111,6 +111,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     address.city || address.town || address.village || 'Não disponível';
                 document.getElementById('cep').textContent = 
                     address.postcode || 'Não disponível';
+                
+                const bairro = address.suburb || address.neighbourhood || address.residential || '';
+                document.getElementById('endereco').dataset.bairro = bairro;
             })
             .catch(err => {
                 console.error('Erro ao obter endereço:', err);
@@ -186,6 +189,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         formData.append('cidade', document.getElementById('cidade').textContent);
         formData.append('cep', document.getElementById('cep').textContent);
         formData.append('rua', document.getElementById('endereco').textContent);
+        
+        // Adicionar bairro ao formData
+        const bairro = document.getElementById('endereco').dataset.bairro || '';
+        formData.append('bairro', bairro);
         
         // foto se existir
         if (fotoInput.files.length > 0) {

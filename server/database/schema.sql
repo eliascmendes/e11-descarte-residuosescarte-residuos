@@ -16,6 +16,7 @@ CREATE TABLE Denuncias (
     cidade VARCHAR(255) NOT NULL,
     cep VARCHAR(20) NOT NULL,
     rua VARCHAR(255) NOT NULL,
+    bairro VARCHAR(100),
     status VARCHAR(20) DEFAULT 'pendente' CHECK (status IN ('pendente', 'em andamento', 'resolvido')),
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,

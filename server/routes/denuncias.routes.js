@@ -80,7 +80,7 @@ router.get('/:id', async (req, res) => {
  */
 router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async (req, res) => {
   try {
-    const { latitude, longitude, descricao, cidade, cep, rua } = req.body;
+    const { latitude, longitude, descricao, cidade, cep, rua, bairro } = req.body;
     const usuario_id = req.usuario.id;
 
     // Se houver uma foto, usa a URL do Cloudinary
@@ -99,7 +99,8 @@ router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async 
       foto_url,
       cidade,
       cep,
-      rua
+      rua,
+      bairro
     );
 
     res.status(201).json(denuncia);
@@ -129,10 +130,10 @@ router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async 
  */
 router.put('/:id', verificarToken, checkDenunciaAccess, validateDenuncia, async (req, res) => {
   const { id } = req.params;
-  const { latitude, longitude, descricao, foto_url, cidade, cep, rua } = req.body;
+  const { latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro } = req.body;
 
   try {
-    await db.updateDenuncia(id, latitude, longitude, descricao, foto_url, cidade, cep, rua);
+    await db.updateDenuncia(id, latitude, longitude, descricao, foto_url, cidade, cep, rua, bairro);
     res.json({ mensagem: 'Denúncia atualizada com sucesso!' });
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao atualizar denúncia', detalhes: err.message });
