@@ -100,10 +100,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         const card = document.createElement('div');
         card.className = 'denuncia';
         
-        // URL completa para a foto
-        const fotoUrl = denuncia.foto_url 
-            ? `${API_BASE_URL}${denuncia.foto_url}`
-            : '../images/denuncia_exemplo.jpg';
+        // Determinar URL correta para a foto
+        let fotoUrl;
+        if (!denuncia.foto_url) {
+            // Sem foto
+            fotoUrl = '../images/denuncia_exemplo.jpg';
+        } else if (denuncia.foto_url.includes('cloudinary.com')) {
+            // URL completa do Cloudinary
+            fotoUrl = denuncia.foto_url;
+        } else if (denuncia.foto_url.startsWith('/uploads/')) {
+            // URL relativa
+            fotoUrl = `${API_BASE_URL}${denuncia.foto_url}`;
+        } else {
+            // Qualquer outro formato de URL
+            fotoUrl = denuncia.foto_url;
+        }
         
         // Formatar descrição para mostrar
         const descricao = denuncia.descricao || 'Sem descrição disponível';
@@ -130,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
         card.innerHTML = `
             <div class="imagem">
-                <img src="${fotoUrl}" alt="Foto da denúncia">
+                <img src="${fotoUrl}" alt="Foto da denúncia" onerror="this.src='../images/denuncia_exemplo.jpg'">
             </div>
             <div class="denuncia_descricao">
                 <div class="cabecalho_problema">

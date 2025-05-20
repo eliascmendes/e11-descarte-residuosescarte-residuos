@@ -10,6 +10,14 @@ services:
         sync: false 
       - key: CLIENT_URL
         value: https://ecovigia-site.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dpjf1w7bw
+      - key: CLOUDINARY_API_KEY
+        value: 168314576313623
+      - key: CLOUDINARY_API_SECRET
+        value: EkCHl_OfyD9UphRZmAJpDD_SXb8
+      - key: NODE_ENV
+        value: production
     autoDeploy: true
     rootDir: .
 

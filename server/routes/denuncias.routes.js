@@ -83,17 +83,12 @@ router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async 
     const { latitude, longitude, descricao, cidade, cep, rua } = req.body;
     const usuario_id = req.usuario.id;
 
-    // Verifica se o diretório uploads existe, se não, cria
-    const uploadsDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    // Se houver uma foto, salva o caminho
+    // Se houver uma foto, usa a URL do Cloudinary
     let foto_url = null;
     if (req.file) {
-      foto_url = `/uploads/${req.file.filename}`;
-      console.log('Arquivo salvo em:', path.join(uploadsDir, req.file.filename));
+      
+      foto_url = req.file.path; // URL completa da imagem no Cloudinary
+      console.log('Foto salva no Cloudinary:', foto_url);
     }
 
     const denuncia = await db.insertDenuncia(
@@ -110,7 +105,7 @@ router.post('/', verificarToken, upload.single('foto'), validateDenuncia, async 
     res.status(201).json(denuncia);
   } catch (error) {
     console.error('Erro ao criar denúncia:', error);
-    res.status(500).json({ error: 'Erro ao criar denúncia' });
+    res.status(500).json({ error: 'Erro ao criar denúncia', details: error.message });
   }
 });
 
