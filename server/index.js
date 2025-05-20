@@ -15,7 +15,7 @@ const comentariosRoutes = require('./routes/comentarios.routes');
 const votosRoutes = require('./routes/votos.routes');
 
 // URL de conexão para o PostgreSQL
-const databaseUrl = process.env.DATABASE_URL || "postgresql://ecovigia_user:RzCDm1TzkVEleFiOY7cSEqjCD3vlwAbo@dpg-d0mf4ojuibrs73elms0g-a/ecovigia";
+const databaseUrl = process.env.DATABASE_URL || "postgresql://ecovigia_3kum_user:8ypp4SgZVfRff0ZwqhLXftBg3NRoUgZT@dpg-d0mfk3be5dus738g0dg0-a/ecovigia_3kum";
 
 const sslConfig = process.env.NODE_ENV === 'production' 
   ? { ssl: { rejectUnauthorized: false } } 
