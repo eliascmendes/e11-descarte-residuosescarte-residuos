@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/listadenuncias.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <title>Painel do Administrador</title>
+</head>
+<body>
+    <nav>
+        <a href="../index.html" id="EcoVigia">EcoVigia</a>
+        <button class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="opcoes_nav">
+            <a href="../index.html#tela3">Funcionalidades</a>
+            <a href="denuncia.html">Denunciar</a>
+            <a href="mapa.html">Mapa</a>
+            <a href="voto.html">Votar</a>
+            <a href="../index.html#tela5">Equipe</a>
+            <button id="entrar">Entrar</button>
+        </div>
+        <div class="overlay"></div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Painel de Administração</h1>
+            <p>Gerencie as denúncias reportadas pela comunidade</p>
+        </div>
+
+        <div class="admin-filters">
+            <div class="filter-group">
+                <label for="status-filter">Filtrar por status:</label>
+                <select id="status-filter">
+                    <option value="todos">Todos</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="em andamento">Em andamento</option>
+                    <option value="resolvido">Resolvido</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="search">Buscar:</label>
+                <input type="text" id="search" placeholder="Buscar por descrição ou localização">
+            </div>
+        </div>
+
+        <div class="denuncias-admin" id="denuncias-container">
+            <div class="loading">Carregando denúncias...</div>
+        </div>
+
+        <template id="denuncia-template">
+            <div class="denuncia-card admin-card">
+                <div class="denuncia-header">
+                    <span class="denuncia-id">#ID</span>
+                    <span class="denuncia-status status-pendente">Pendente</span>
+                </div>
+                <div class="denuncia-body">
+                    <div class="denuncia-info">
+                        <h3 class="denuncia-local">Localização da denúncia</h3>
+                        <p class="denuncia-desc">Descrição da denúncia...</p>
+                        <div class="denuncia-meta">
+                            <span class="denuncia-data">Data: 01/01/2023</span>
+                            <span class="denuncia-autor">Autor: Nome do usuário</span>
+                        </div>
+                    </div>
+                    <div class="denuncia-img-container">
+                        <img class="denuncia-img" src="" alt="Imagem da denúncia">
+                    </div>
+                </div>
+                <div class="denuncia-actions">
+                    <select class="status-update">
+                        <option value="pendente">Pendente</option>
+                        <option value="em andamento">Em andamento</option>
+                        <option value="resolvido">Resolvido</option>
+                    </select>
+                    <button class="btn-save">Salvar Status</button>
+                    <button class="btn-delete">Excluir Denúncia</button>
+                </div>
+            </div>
+        </template>
+
+        <div id="confirm-modal" class="modal">
+            <div class="modal-content">
+                <h2>Confirmar exclusão</h2>
+                <p>Tem certeza que deseja excluir esta denúncia? Esta ação não pode ser desfeita.</p>
+                <div class="modal-actions">
+                    <button id="modal-cancel">Cancelar</button>
+                    <button id="modal-confirm">Confirmar Exclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="rodape">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">EcoVigia</div>
+                <p>© Plataforma Comunitária de Monitoramento de Resíduos</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="../js/admin.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 

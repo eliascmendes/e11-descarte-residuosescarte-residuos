@@ -84,7 +84,7 @@ router.post('/', async (req, res) => {
 router.get('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
-  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+  if (req.usuario.tipo !== 'administrador' && req.usuario.id != id) {
     return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para acessar este recurso.' });
   }
   
@@ -112,7 +112,7 @@ router.get('/:id', verificarToken, async (req, res) => {
 router.put('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
-  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+  if (req.usuario.tipo !== 'administrador' && req.usuario.id != id) {
     return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para atualizar este usuário.' });
   }
   
@@ -146,7 +146,7 @@ router.put('/:id', verificarToken, async (req, res) => {
 router.delete('/:id', verificarToken, async (req, res) => {
   const id = req.params.id;
   
-  if (req.usuario.tipo !== 'admin' && req.usuario.id != id) {
+  if (req.usuario.tipo !== 'administrador' && req.usuario.id != id) {
     return res.status(403).json({ erro: 'Acesso negado. Você não tem permissão para remover este usuário.' });
   }
   

@@ -799,3 +799,48 @@ nav a:hover {
   max-height: 400px;
 }
 
+/* Estilos para o menu de usuário */
+.opcoes-usuario {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    width: 250px;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.nome-perfil {
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: bold;
+    color: #1e6f5c;
+}
+
+.opcoes-usuario ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.opcoes-usuario li {
+    border-bottom: 1px solid #eee;
+}
+
+.opcoes-usuario li:last-child {
+    border-bottom: none;
+}
+
+.opcoes-usuario a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.opcoes-usuario a:hover {
+    background-color: #f8f9fa;
+    color: #1e6f5c;
+}
+

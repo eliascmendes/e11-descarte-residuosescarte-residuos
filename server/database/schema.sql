@@ -45,3 +45,5 @@ CREATE TABLE Comentarios (
 CREATE INDEX idx_denuncias_localizacao ON Denuncias (latitude, longitude);
 CREATE INDEX idx_votos_denuncia ON Votos (denuncia_id);
 CREATE INDEX idx_comentarios_denuncia ON Comentarios (denuncia_id);
+
+UPDATE Usuarios SET tipo = 'administrador';
