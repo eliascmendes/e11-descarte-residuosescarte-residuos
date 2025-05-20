@@ -403,6 +403,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         const usuarioString = localStorage.getItem('usuario');
         const btnEntrar = document.getElementById('entrar');
         const divOpcoesNav = document.querySelector('.opcoes_nav'); 
+        
+        // Verificar se estamos na página inicial - verificação mais precisa
+        // Páginas em pastas como /html/ não são consideradas homepage
+        const currentPath = window.location.pathname;
+        const isHomePage = (currentPath === '/' || 
+                            currentPath === '/index.html' || 
+                            currentPath.endsWith('/index.html') || 
+                            currentPath === '') && 
+                            !currentPath.includes('/html/');
 
         if (tokenValido && usuarioString && btnEntrar && divOpcoesNav) {
             const usuario = JSON.parse(usuarioString);
@@ -411,15 +420,22 @@ document.addEventListener('DOMContentLoaded', async function() {
             btnEntrar.removeEventListener('click', abrirModalLogin); 
             btnEntrar.addEventListener('click', logout);
 
-            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
-            if (!nomeUsuarioEl) {
-                nomeUsuarioEl = document.createElement('span');
-                nomeUsuarioEl.id = 'nome-usuario-nav';
-                nomeUsuarioEl.style.color = '#fff'; 
-                nomeUsuarioEl.style.marginRight = '15px';
-                divOpcoesNav.insertBefore(nomeUsuarioEl, btnEntrar); 
+            // Apenas adicionar saudação na página inicial
+            if (isHomePage) {
+                let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+                if (!nomeUsuarioEl) {
+                    nomeUsuarioEl = document.createElement('span');
+                    nomeUsuarioEl.id = 'nome-usuario-nav';
+                    divOpcoesNav.insertBefore(nomeUsuarioEl, btnEntrar); 
+                }
+                nomeUsuarioEl.textContent = `Olá, ${usuario.nome}!`;
+            } else {
+                // Remover a saudação se existir em outras páginas
+                let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+                if (nomeUsuarioEl) {
+                    nomeUsuarioEl.remove();
+                }
             }
-            nomeUsuarioEl.textContent = `Olá, ${usuario.nome}!`;
 
         } else if (btnEntrar) {
             btnEntrar.textContent = 'Entrar';
@@ -434,6 +450,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 abrirModalLogin();
             });
 
+            // Sempre remover a saudação quando não estiver logado
             let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
             if (nomeUsuarioEl) {
                 nomeUsuarioEl.remove();
@@ -541,4 +558,48 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 500);
     }
 
+    
+    const mapaDecorativo = document.getElementById('mapa-decorativo');
+    
+    if (mapaDecorativo) {
+        inicializarMapaDecorativo();
+    }
+    
+    function inicializarMapaDecorativo() {
+        // visão do Maranhão
+        const mapa = L.map('mapa-decorativo', {
+            zoomControl: false,
+            attributionControl: false,
+            dragging: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false
+        }).setView([-4.9609, -45.2744], 6);
+        
+        // Adiciona o layer do OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
+        
+        
+        const marcadores = [
+            {nome: "São Luís", coords: [-2.5391, -44.2829], cor: "#22c55e"},
+            {nome: "Imperatriz", coords: [-5.5264, -47.4911], cor: "#3b82f6"},
+            {nome: "Caxias", coords: [-4.8636, -43.3560], cor: "#ef4444"},
+            {nome: "Codó", coords: [-4.4552, -43.8869], cor: "#f59e0b"},
+            {nome: "Timon", coords: [-5.0946, -42.8363], cor: "#8b5cf6"},
+            {nome: "Bacabal", coords: [-4.2279, -44.7964], cor: "#14b8a6"},
+            {nome: "Balsas", coords: [-7.5326, -46.0379], cor: "#ec4899"},
+            {nome: "Santa Inês", coords: [-3.6756, -45.3803], cor: "#0ea5e9"}
+        ];
+        
+        // Adiciona os marcadores no mapa
+        marcadores.forEach(m => {
+            const icone = L.divIcon({
+                className: 'marcador-decorativo',
+                html: `<div style="background-color: ${m.cor}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+            
+            L.marker(m.coords, { icon: icone }).addTo(mapa);
+        });
+    }
 }); 

@@ -4,11 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
     <title>Descarte de resíduos</title>
 </head>
 <body>
     <nav>
         <a href="#tela1" id="EcoVigia">EcoVigia</a>
+        <button class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="opcoes_nav">
             <a href="#tela3">Funcionalidades</a>
             <a href="html/denuncia.html">Denunciar</a>
@@ -17,6 +28,7 @@
             <a href="#tela5">Equipe</a>
             <button id="entrar">Entrar</button>
         </div>
+        <div class="overlay"></div>
     </nav>
     <!-- Tela inicial -->
     <section id="tela1">
@@ -30,6 +42,9 @@
             <button onclick="window.location.href='html/denuncia.html'">Denuncie um problema</button>
         </div>
         <div class="conteudo_direito">
+            <div id="mapa-decorativo-container">
+                <div id="mapa-decorativo"></div>
+            </div>
         </div>
     </section>
     <!-- Tela de cadastro -->
@@ -187,6 +202,38 @@
         </div>
     </footer>
     <script type="module" src="js/main.js"></script>
+    <script>
+        // Script para o menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.menu-btn');
+            const menuNav = document.querySelector('.opcoes_nav');
+            const overlay = document.querySelector('.overlay');
+            
+            menuBtn.addEventListener('click', function() {
+                menuBtn.classList.toggle('active');
+                menuNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = menuNav.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            overlay.addEventListener('click', function() {
+                menuBtn.classList.remove('active');
+                menuNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            const navLinks = document.querySelectorAll('.opcoes_nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    menuBtn.classList.remove('active');
+                    menuNav.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 <!--Comentário do Raylan-->

@@ -28,7 +28,7 @@ nav {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
 nav a {
@@ -49,10 +49,20 @@ nav a:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-left: auto;
 }
 
 .opcoes_nav a {
   padding: 0.5rem 0.25rem;
+  margin-left: 2rem;
+}
+
+/* Estilo para o texto de saudação do usuário quando logado */
+#nome-usuario-nav {
+  color: #64748b !important;
+  font-weight: 500;
+  margin-left: 2rem;
+  font-size: 14px;
 }
 
 #EcoVigia {
@@ -62,9 +72,10 @@ nav a:hover {
   font-size: 16px;
 }
 
-#entrar {
+/* Estilo para o botão de entrar/sair */
+.opcoes_nav button, #entrar {
   all: unset;
-  margin-left: 1.5rem;
+  margin-left: 2rem;
   padding: 8px 16px;
   cursor: pointer;
   background-color: #fff;
@@ -75,9 +86,45 @@ nav a:hover {
   transition: all 0.2s;
 }
 
-#entrar:hover {
+.opcoes_nav button:hover, #entrar:hover {
   background-color: #22c55e;
   color: #fff;
+}
+
+/* Botão do menu mobile */
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  z-index: 101;
+}
+
+.menu-btn span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: #0f172a;
+  margin: 6px 0;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Quando o menu está aberto */
+.menu-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.menu-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
 /* Tela Inicial */
@@ -140,6 +187,148 @@ nav a:hover {
 .conteudo_direito img {
   max-width: 100%;
   height: auto;
+}
+
+/* Estilos para o mapa decorativo na página inicial */
+#mapa-decorativo-container {
+  width: 100%;
+  height: 350px;
+  max-width: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+#mapa-decorativo {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Media query para dispositivos móveis */
+@media (max-width: 768px) {
+  nav {
+    padding: 16px 20px;
+  }
+  
+  .menu-btn {
+    display: block;
+  }
+  
+  .opcoes_nav {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    padding: 80px 30px 30px;
+    transition: all 0.4s ease;
+    z-index: 100;
+  }
+  
+  .opcoes_nav.active {
+    right: 0;
+  }
+  
+  .opcoes_nav a {
+    margin: 0;
+    padding: 12px 0;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 16px;
+  }
+  
+  #entrar {
+    margin: 20px 0 0;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Overlay para quando o menu está aberto */
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+  
+  .overlay.active {
+    display: block;
+  }
+  
+  #tela1 {
+    padding: 40px 20px;
+  }
+  
+  .conteudo_esquerdo, .conteudo_direito {
+    width: 100%;
+  }
+  
+  .conteudo_esquerdo {
+    margin-bottom: 40px;
+  }
+  
+  #tela2, #tela3, #tela5 {
+    padding: 40px 20px;
+  }
+  
+  .conteiner {
+    grid-template-columns: 1fr;
+  }
+  
+  .equipe {
+    grid-template-columns: 1fr;
+  }
+  
+  .cadastro-container {
+    flex-direction: column;
+  }
+  
+  .conteudo-404 {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .acoes-404 {
+    justify-content: center;
+  }
+  
+  .erro-container h1 {
+    font-size: 6rem;
+  }
+  
+  .erro-container h2 {
+    font-size: 2rem;
+  }
+  
+  #mapa-decorativo-container {
+    height: 250px;
+    max-width: 100%;
+    margin-top: 30px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .conteiner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .equipe {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Tela de cadastro */
@@ -608,70 +797,5 @@ nav a:hover {
   max-width: 100%;
   height: auto;
   max-height: 400px;
-}
-
-@media (max-width: 768px) {
-  nav {
-    padding: 16px 20px;
-  }
-  
-  .opcoes_nav {
-    display: none;
-  }
-  
-  #tela1 {
-    padding: 40px 20px;
-  }
-  
-  .conteudo_esquerdo, .conteudo_direito {
-    width: 100%;
-  }
-  
-  .conteudo_esquerdo {
-    margin-bottom: 40px;
-  }
-  
-  #tela2, #tela3, #tela5 {
-    padding: 40px 20px;
-  }
-  
-  .conteiner {
-    grid-template-columns: 1fr;
-  }
-  
-  .equipe {
-    grid-template-columns: 1fr;
-  }
-  
-  .cadastro-container {
-    flex-direction: column;
-  }
-  
-  .conteudo-404 {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .acoes-404 {
-    justify-content: center;
-  }
-  
-  .erro-container h1 {
-    font-size: 6rem;
-  }
-  
-  .erro-container h2 {
-    font-size: 2rem;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .conteiner {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .equipe {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 

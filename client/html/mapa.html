@@ -16,6 +16,11 @@
 <body>
     <nav>
         <a href="../index.html" id="EcoVigia">EcoVigia</a>
+        <button class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="opcoes_nav">
             <a href="../index.html#tela3">Funcionalidades</a>
             <a href="denuncia.html">Denunciar</a>
@@ -24,6 +29,7 @@
             <a href="../index.html#tela5">Equipe</a>
             <button id="entrar">Entrar</button>
         </div>
+        <div class="overlay"></div>
     </nav>
 
     <div class="container-central">
@@ -60,6 +66,48 @@
         </div>
     </div>
 
+    <footer id="rodape">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">EcoVigia</div>
+                <p>© Plataforma Comunitária de Monitoramento de Resíduos</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para o menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.menu-btn');
+            const menuNav = document.querySelector('.opcoes_nav');
+            const overlay = document.querySelector('.overlay');
+            
+            menuBtn.addEventListener('click', function() {
+                menuBtn.classList.toggle('active');
+                menuNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = menuNav.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            overlay.addEventListener('click', function() {
+                menuBtn.classList.remove('active');
+                menuNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Fechar menu ao clicar em um link
+            const navLinks = document.querySelectorAll('.opcoes_nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    menuBtn.classList.remove('active');
+                    menuNav.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
     <script src="../js/main.js"></script>
     <script src="../js/mapa.js"></script>
 </body>
