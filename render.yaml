@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ecovigia-api
+    name: ecovigia-api-ssvv
     runtime: node
     plan: free
     buildCommand: "npm install"
@@ -22,7 +22,7 @@ services:
     rootDir: .
 
   - type: web
-    name: ecovigia-site
+    name: ecovigia-site-aj00
     runtime: static
     buildCommand: ""
     staticPublishPath: client

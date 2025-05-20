@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         API_BASE_URL = module.default;
     } catch (error) {
         console.error('Erro ao carregar configuração da API:', error);
-        API_BASE_URL = 'https://ecovigia-api.onrender.com'; // Fallback
+        API_BASE_URL = 'https://ecovigia-api-ssvv.onrender.com'; // Fallback
     }
     
     const links = document.querySelectorAll('nav a[href^="#"]');

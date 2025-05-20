@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         API_BASE_URL = module.default;
     } catch (error) {
         console.error('Erro ao carregar configuração da API:', error);
-        API_BASE_URL = 'https://ecovigia-api.onrender.com';
+        API_BASE_URL = 'https://ecovigia-api-ssvv.onrender.com';
     }
     
     // Se estamos na página de voto, não verificamos a autenticação
