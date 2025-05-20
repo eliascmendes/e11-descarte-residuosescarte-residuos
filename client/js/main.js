@@ -412,101 +412,49 @@ document.addEventListener('DOMContentLoaded', async function() {
                             currentPath.endsWith('/index.html') || 
                             currentPath === '') && 
                             !currentPath.includes('/html/');
-        
-        if (!tokenValido || !usuarioString) {
-            if (btnEntrar) {
-                btnEntrar.textContent = 'Entrar';
-                btnEntrar.onclick = abrirModalLogin;
-            }
-            return;
-        }
-        
-        try {
+
+        if (tokenValido && usuarioString && btnEntrar && divOpcoesNav) {
             const usuario = JSON.parse(usuarioString);
             
-            if (btnEntrar) {
-                btnEntrar.textContent = 'Minha Conta';
-                
-                // Remover evento antigo
-                const btnEntrarClone = btnEntrar.cloneNode(true);
-                btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
-                
-                btnEntrarClone.addEventListener('click', () => {
-                    const opcoesUsuario = document.createElement('div');
-                    opcoesUsuario.className = 'opcoes-usuario';
-                    
-                    const nomePerfil = document.createElement('div');
-                    nomePerfil.className = 'nome-perfil';
-                    nomePerfil.textContent = `Olá, ${usuario.nome.split(' ')[0]}`;
-                    
-                    const opcoesList = document.createElement('ul');
-                    
-                    // Opção de admin para usuários administradores
-                    if (usuario.tipo === 'administrador') {
-                        const adminLi = document.createElement('li');
-                        const adminLink = document.createElement('a');
-                        adminLink.href = 'html/admin.html';
-                        adminLink.textContent = 'Painel de Administração';
-                        adminLi.appendChild(adminLink);
-                        opcoesList.appendChild(adminLi);
-                    }
-                    
-                    // Opções para todos os usuários
-                    const perfilLi = document.createElement('li');
-                    const perfilLink = document.createElement('a');
-                    perfilLink.href = 'html/perfil.html';
-                    perfilLink.textContent = 'Meu Perfil';
-                    perfilLi.appendChild(perfilLink);
-                    
-                    const minhasDenunciasLi = document.createElement('li');
-                    const minhasDenunciasLink = document.createElement('a');
-                    minhasDenunciasLink.href = 'html/minhas-denuncias.html';
-                    minhasDenunciasLink.textContent = 'Minhas Denúncias';
-                    minhasDenunciasLi.appendChild(minhasDenunciasLink);
-                    
-                    const sairLi = document.createElement('li');
-                    const sairLink = document.createElement('a');
-                    sairLink.href = '#';
-                    sairLink.textContent = 'Sair';
-                    sairLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        logout();
-                    });
-                    sairLi.appendChild(sairLink);
-                    
-                    opcoesList.appendChild(perfilLi);
-                    opcoesList.appendChild(minhasDenunciasLi);
-                    opcoesList.appendChild(sairLi);
-                    
-                    opcoesUsuario.appendChild(nomePerfil);
-                    opcoesUsuario.appendChild(opcoesList);
-                    
-                    // Posicionar menu abaixo do botão
-                    const rect = btnEntrarClone.getBoundingClientRect();
-                    opcoesUsuario.style.position = 'absolute';
-                    opcoesUsuario.style.top = (rect.bottom + window.scrollY) + 'px';
-                    opcoesUsuario.style.right = '20px';
-                    
-                    // Adicionar ao DOM
-                    document.body.appendChild(opcoesUsuario);
-                    
-                    // Fechar ao clicar fora
-                    const fecharOpcoesUsuario = (e) => {
-                        if (!opcoesUsuario.contains(e.target) && e.target !== btnEntrarClone) {
-                            document.body.removeChild(opcoesUsuario);
-                            document.removeEventListener('click', fecharOpcoesUsuario);
-                        }
-                    };
-                    
-                    // Usar setTimeout para evitar que o evento seja capturado imediatamente
-                    setTimeout(() => {
-                        document.addEventListener('click', fecharOpcoesUsuario);
-                    }, 0);
-                });
+            btnEntrar.textContent = 'Sair';
+            btnEntrar.removeEventListener('click', abrirModalLogin); 
+            btnEntrar.addEventListener('click', logout);
+
+            // Apenas adicionar saudação na página inicial
+            if (isHomePage) {
+                let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+                if (!nomeUsuarioEl) {
+                    nomeUsuarioEl = document.createElement('span');
+                    nomeUsuarioEl.id = 'nome-usuario-nav';
+                    divOpcoesNav.insertBefore(nomeUsuarioEl, btnEntrar); 
+                }
+                nomeUsuarioEl.textContent = `Olá, ${usuario.nome}!`;
+            } else {
+                // Remover a saudação se existir em outras páginas
+                let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+                if (nomeUsuarioEl) {
+                    nomeUsuarioEl.remove();
+                }
             }
+
+        } else if (btnEntrar) {
+            btnEntrar.textContent = 'Entrar';
+            btnEntrar.removeEventListener('click', logout);
             
-        } catch (error) {
-            console.error('Erro ao atualizar interface:', error);
+            // Remove qualquer listener de clique existente para evitar duplicação
+            const btnEntrarClone = btnEntrar.cloneNode(true);
+            btnEntrar.parentNode.replaceChild(btnEntrarClone, btnEntrar);
+
+            btnEntrarClone.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModalLogin();
+            });
+
+            // Sempre remover a saudação quando não estiver logado
+            let nomeUsuarioEl = document.getElementById('nome-usuario-nav');
+            if (nomeUsuarioEl) {
+                nomeUsuarioEl.remove();
+            }
         }
     }
 

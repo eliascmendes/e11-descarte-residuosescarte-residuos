@@ -3,7 +3,7 @@ const db = require('../db');
 const checkDenunciaAccess = async (req, res, next) => {
   const denunciaId = req.params.id;
   const usuarioId = req.usuario.id;
-  const isAdmin = req.usuario.tipo === 'administrador';
+  const isAdmin = req.usuario.tipo === 'admin';
 
   try {
     const denuncia = await db.getDenunciaById(denunciaId);
