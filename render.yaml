@@ -9,7 +9,7 @@ services:
       - key: DATABASE_URL
         value: postgresql://ecovigia_3kum_user:8ypp4SgZVfRff0ZwqhLXftBg3NRoUgZT@dpg-d0mfk3be5dus738g0dg0-a/ecovigia_3kum
       - key: CLIENT_URL
-        value: https://ecovigia-site.onrender.com
+        value: https://ecovigia-site-aj00.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
         value: dpjf1w7bw
       - key: CLOUDINARY_API_KEY
