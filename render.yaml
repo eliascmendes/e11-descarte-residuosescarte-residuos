@@ -7,7 +7,7 @@ services:
     startCommand: "npm start"
     envVars:
       - key: DATABASE_URL
-        sync: false 
+        value: postgresql://ecovigia_user:RzCDm1TzkVEleFiOY7cSEqjCD3vlwAbo@dpg-d0mf4ojuibrs73elms0g-a.oregon-postgres.render.com/ecovigia
       - key: CLIENT_URL
         value: https://ecovigia-site.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
@@ -28,8 +28,8 @@ services:
     staticPublishPath: client
     autoDeploy: true
 
-# banco gerenciado MySQL
+# banco gerenciado PostgreSQL
 databases:
-  - name: ecovigia-db
+  - name: ecovigia
     plan: free
     ipAllowList: [] 
