@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
         card.innerHTML = `
             <div class="imagem">
-                <img src="${fotoUrl}" alt="Foto da denúncia" onerror="this.src='../images/denuncia_exemplo.jpg'">
+                <img src="${fotoUrl}" alt="Foto da denúncia" class="loading" onload="this.classList.remove('loading')" onerror="this.src='../images/denuncia_exemplo.jpg'; this.onerror=null; this.parentElement.classList.add('sem-imagem'); this.classList.remove('loading');">
             </div>
             <div class="denuncia_descricao">
                 <div class="cabecalho_problema">

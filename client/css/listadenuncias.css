@@ -62,12 +62,39 @@ h1 {
     font-weight: bold;
     color: #6c757d;
     overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    aspect-ratio: 1 / 1;
+}
+
+.imagem::before {
+    content: "Imagem não disponível";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    text-align: center;
+    opacity: 0;
+}
+
+.imagem.sem-imagem::before {
+    opacity: 1;
 }
 
 .imagem img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+}
+
+.imagem img.loading {
+    opacity: 0;
 }
 
 .denuncia_descricao {
@@ -263,7 +290,8 @@ h1 {
     
     .imagem {
         width: 100%;
-        height: 200px;
+        height: auto;
+        aspect-ratio: 16 / 9;
     }
 
     .denuncia_descricao {
@@ -274,5 +302,11 @@ h1 {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .imagem {
+        aspect-ratio: 4 / 3;
     }
 } 

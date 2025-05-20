@@ -133,7 +133,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         //  marcador com o ícone personalizado
         const marcador = L.marker([denuncia.latitude, denuncia.longitude], { icon: icone }).addTo(mapa);
         
-        const dataRegistro = new Date(denuncia.created_at).toLocaleDateString('pt-BR');
+        //"Invalid Date"
+        let dataRegistro = 'Não disponível';
+        if (denuncia.created_at) {
+            try {
+                dataRegistro = new Date(denuncia.created_at).toLocaleDateString('pt-BR');
+                if (dataRegistro === 'Invalid Date') {
+                    dataRegistro = 'Não disponível';
+                }
+            } catch (e) {
+                console.error('Erro ao formatar data:', e);
+                dataRegistro = 'Não disponível';
+            }
+        }
         
         // status para exibição
         let statusClasse = 'status-pendente';
@@ -157,9 +169,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="status ${statusClasse}">${statusTexto}</div>
         `;
         
-        // Adiciona a imagem ao popup se disponível
         if (denuncia.foto_url) {
-            conteudoPopup += `<img src="${API_BASE_URL}${denuncia.foto_url}" alt="Foto da denúncia">`;
+            const fotoUrl = denuncia.foto_url.startsWith('/') 
+                ? `${API_BASE_URL}${denuncia.foto_url}`
+                : `${API_BASE_URL}/${denuncia.foto_url}`;
+                
+            conteudoPopup += `<img src="${fotoUrl}" alt="Foto da denúncia" onerror="this.onerror=null; this.style.display='none'; this.parentNode.insertBefore(document.createTextNode('Imagem indisponível'), this);">`;
         }
         
         conteudoPopup += `</div>`;
