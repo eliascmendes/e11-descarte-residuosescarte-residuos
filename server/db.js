@@ -52,7 +52,12 @@ async function insertUsuario(nome, email, senha) {
 // Denúncias
 async function selectDenuncias() {
   const conn = await connect();
-  const { rows } = await conn.query('SELECT * FROM Denuncias;');
+  const { rows } = await conn.query(`
+    SELECT d.*, 
+    (SELECT COUNT(*) FROM Votos v WHERE v.denuncia_id = d.id) AS total_votos 
+    FROM Denuncias d 
+    ORDER BY total_votos DESC;
+  `);
   return rows;
 }
 

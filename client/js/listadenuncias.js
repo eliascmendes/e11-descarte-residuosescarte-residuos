@@ -63,13 +63,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Denúncias carregadas:', denuncias);
             
             for (const denuncia of denuncias) {
-                // Buscar contagem de votos para cada denúncia
-                const respostaVotos = await fetch(`${API_BASE_URL}/votos/denuncias/${denuncia.id}`);
-                if (respostaVotos.ok) {
-                    const dadosVotos = await respostaVotos.json();
-                    denuncia.votos = dadosVotos.total;
+                if (denuncia.total_votos !== undefined) {
+                    denuncia.votos = parseInt(denuncia.total_votos);
                 } else {
-                    denuncia.votos = 0;
+                    //  contagem de votos para cada denúncia
+                    const respostaVotos = await fetch(`${API_BASE_URL}/votos/denuncias/${denuncia.id}`);
+                    if (respostaVotos.ok) {
+                        const dadosVotos = await respostaVotos.json();
+                        denuncia.votos = dadosVotos.total;
+                    } else {
+                        denuncia.votos = 0;
+                    }
                 }
                 
                 // Buscar comentários para cada denúncia
@@ -81,6 +85,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     denuncia.comentarios = [];
                 }
             }
+            
+            // ordenadas pelo número de votos
+            denuncias.sort((a, b) => (b.votos || 0) - (a.votos || 0));
             
             todasDenuncias = denuncias;
             

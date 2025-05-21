@@ -4,37 +4,44 @@ EcoVigia é uma plataforma comunitária projetada para combater o descarte irreg
 
 ## Principais Funcionalidades
 
-*   **Denúncias Georreferenciadas:** Reporte pontos de descarte irregular diretamente em um mapa interativo.
+*   **Denúncias Georreferenciadas:** Reporte pontos de descarte irregular diretamente em um mapa interativo usando suas coordenadas geográficas.
 *   **Acompanhamento Comunitário:** Visualize denúncias de outros usuários e acompanhe o progresso da resolução.
-*   **Upload de Evidências:** Anexe fotos às suas denúncias para fornecer mais detalhes.
+*   **Upload de Evidências:** Anexe fotos às suas denúncias para fornecer mais detalhes, com armazenamento via Cloudinary.
 *   **Priorização por Votos:** A comunidade pode votar nas denúncias mais críticas, ajudando a priorizar ações.
-*   **Engajamento e Discussão:** Comente nas denúncias para discutir soluções e compartilhar informações.
+*   **Engajamento e Discussão:** Comente nas denúncias para discutir soluções e compartilhar informações relevantes.
+*   **Mapa Interativo:** Visualize todos os pontos de descarte irregular reportados em um mapa intuitivo com Leaflet.
+*   **Sistema de Autenticação:** Cadastro e login de usuários com diferentes níveis de acesso (moradores e administradores). (Em construção)
 
 ## Tecnologias Utilizadas
 
-*   **Backend:** Node.js, Express.js, PostgreSQL, JWT (autenticação), Multer (uploads), Swagger (documentação da API).
-*   **Frontend:** HTML, CSS, JavaScript.
-*   **Hospedagem:** Configurável para deploy na Render.
+### Backend
+*   **Node.js e Express:** Framework para construção da API RESTful.
+*   **PostgreSQL:** Banco de dados relacional para armazenamento persistente de dados.
+*   **JWT (JSON Web Token):** Autenticação segura para usuários.
+*   **Multer:** Middleware para gerenciamento de uploads de arquivos.
+*   **Cloudinary:** Serviço para armazenamento de imagens.
+*   **Bcrypt:** Criptografia de senhas para segurança dos usuários.
+*   **Swagger:** Documentação interativa da API.
 
-## Estrutura do Projeto
+### Frontend
+*   **HTML5, CSS3, JavaScript:** Tecnologias fundamentais para a interface do usuário.
+*   **Leaflet:** Biblioteca JavaScript para mapas interativos.
+*   **Design Responsivo:** Interface adaptada para dispositivos móveis e desktop.
+
+### Hospedagem e Deploy
+*   **Render:** Plataforma para hospedagem do frontend, backend e banco de dados.
+*   **CI/CD:** Configuração para deploy automático via repositório Git.
 
 ```
-e11-descarte-residuos/
-├── client/         # Frontend (HTML, CSS, JS)
-├── server/         # Backend (Node.js/Express API)
-│   ├── config/
-│   ├── database/
-│   ├── middleware/
-│   ├── routes/
-│   ├── uploads/
-│   ├── db.js
-│   └── index.js
-├── .gitignore
-├── LICENSE
-├── package.json
-├── README.md
-└── render.yaml    
-```
+
+## Modelos de Dados
+
+O sistema utiliza os seguintes modelos principais:
+
+* **Usuários:** Gerenciamento de contas com diferentes papéis (moradores e administradores). (Em construção)
+* **Denúncias:** Registros de pontos de descarte irregular com informações geográficas e status.
+* **Votos:** Sistema de priorização de denúncias pela comunidade.
+* **Comentários:** Espaço para discussão e acompanhamento das denúncias.
 
 ## Equipe de Desenvolvimento
 
