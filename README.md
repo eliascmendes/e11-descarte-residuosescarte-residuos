@@ -32,8 +32,6 @@ EcoVigia é uma plataforma comunitária projetada para combater o descarte irreg
 *   **Render:** Plataforma para hospedagem do frontend, backend e banco de dados.
 *   **CI/CD:** Configuração para deploy automático via repositório Git.
 
-```
-
 ## Modelos de Dados
 
 O sistema utiliza os seguintes modelos principais:
