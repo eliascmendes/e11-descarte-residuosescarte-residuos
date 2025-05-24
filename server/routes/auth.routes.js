@@ -5,7 +5,13 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { verificarToken, isAdmin, JWT_SECRET } = require('../middleware/auth');
 
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh-token-secret-dev';
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
+if (!REFRESH_TOKEN_SECRET) {
+  console.error("Erro: A variável de ambiente REFRESH_TOKEN_SECRET não está definida.");
+  throw new Error("REFRESH_TOKEN_SECRET não definida");
+}
+
 let refreshTokens = [];
 
 /**

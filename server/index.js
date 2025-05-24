@@ -15,7 +15,12 @@ const comentariosRoutes = require('./routes/comentarios.routes');
 const votosRoutes = require('./routes/votos.routes');
 
 // URL de conexão para o PostgreSQL
-const databaseUrl = process.env.DATABASE_URL || "postgresql://ecovigia_3kum_user:8ypp4SgZVfRff0ZwqhLXftBg3NRoUgZT@dpg-d0mfk3be5dus738g0dg0-a/ecovigia_3kum";
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  console.error("Erro: A variável de ambiente DATABASE_URL não está definida para inicialização do banco.");
+  throw new Error("DATABASE_URL não definida para initDatabase");
+}
 
 const sslConfig = process.env.NODE_ENV === 'production' 
   ? { ssl: { rejectUnauthorized: false } } 

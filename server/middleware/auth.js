@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || '264f3746c9c7214b50f88325d6627c94';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error("Erro: A variável de ambiente JWT_SECRET não está definida.");
+  throw new Error("JWT_SECRET não definida");
+}
 
 // Middleware para verificar processos de autenticação
 const verificarToken = (req, res, next) => {
