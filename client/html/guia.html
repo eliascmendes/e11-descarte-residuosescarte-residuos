@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Descarte - EcoVigia</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/guia.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html" id="EcoVigia">EcoVigia</a>
+        <button class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="opcoes_nav">
+            <a href="../index.html#tela3">Funcionalidades</a>
+            <a href="denuncia.html">Denunciar</a>
+            <a href="mapa.html">Mapa</a>
+            <a href="voto.html">Votar</a>
+            <a href="guia.html" class="active">Guia</a>
+            <a href="../index.html#tela5">Equipe</a>
+            <button id="entrar">Entrar</button>
+        </div>
+        <div class="overlay"></div>
+    </nav>
+
+    <div class="container-central">
+        <div class="guia-header">
+            <h1>Guia de Descarte de Resíduos Sólidos</h1>
+            <p>Aprenda a descartar corretamente diferentes tipos de resíduos para contribuir com a reciclagem, preservar o meio ambiente e manter nossa cidade limpa. Siga estas orientações para cada tipo de material.</p>
+        </div>
+
+        <div class="guia-grid">
+            <div class="guia-card">
+                <h2>Plástico</h2>
+                <p>O plástico pode levar centenas de anos para se decompor. Por isso, é fundamental fazer o descarte correto:</p>
+                <ul>
+                    <li>Lave embalagens para remover resíduos de alimentos</li>
+                    <li>Separe tampas de garrafas PET</li>
+                    <li>Amasse as embalagens para ocupar menos espaço</li>
+                    <li>Verifique o símbolo de reciclagem para identificar o tipo de plástico</li>
+                </ul>
+                <p>Materiais recicláveis: garrafas PET, embalagens de produtos de limpeza, potes de iogurte, sacolas plásticas limpas.</p>
+            </div>
+
+            <div class="guia-card">
+                <h2>Papel</h2>
+                <p>O papel é um dos materiais mais fáceis de reciclar, mas precisa de alguns cuidados:</p>
+                <ul>
+                    <li>Mantenha o papel seco e limpo</li>
+                    <li>Separe por tipo: jornal, revista, papelão</li>
+                    <li>Retire grampos, fitas adesivas e espirais</li>
+                    <li>Não amasse, apenas dobre para economizar espaço</li>
+                </ul>
+                <p>Não são recicláveis: papel higiênico, guardanapos usados, papel carbono, fotografias, papéis plastificados.</p>
+            </div>
+
+            <div class="guia-card">
+                <h2>Vidro</h2>
+                <p>O vidro é 100% reciclável e pode ser reaproveitado infinitas vezes:</p>
+                <ul>
+                    <li>Lave bem os recipientes antes do descarte</li>
+                    <li>Retire rótulos e tampas metálicas</li>
+                    <li>Embale cacos em papel grosso para evitar acidentes</li>
+                    <li>Separe por cores: incolor, verde, âmbar</li>
+                </ul>
+                <p>Não são recicláveis: espelhos, vidros de janelas, lâmpadas, cristais, cerâmicas, porcelanas.</p>
+            </div>
+
+            <div class="guia-card">
+                <h2>Metal</h2>
+                <p>Metais são materiais valiosos para reciclagem e podem ser reaproveitados muitas vezes:</p>
+                <ul>
+                    <li>Lave latas e recipientes antes do descarte</li>
+                    <li>Separe tampas metálicas das embalagens</li>
+                    <li>Amasse latas para economizar espaço</li>
+                    <li>Retire rótulos de papel quando possível</li>
+                </ul>
+                <p>Não são recicláveis: clipes, grampos, esponjas de aço, latas de tinta ou produtos químicos.</p>
+            </div>
+
+            <div class="guia-card">
+                <h2>Orgânico</h2>
+                <p>Resíduos orgânicos podem ser transformados em adubo através da compostagem:</p>
+                <ul>
+                    <li>Separe restos de frutas, legumes e verduras</li>
+                    <li>Cascas de ovos e borra de café são ótimos para compostagem</li>
+                    <li>Evite descartar carnes e laticínios na composteira</li>
+                    <li>Alterne camadas de resíduos secos e úmidos</li>
+                </ul>
+                <p>Dica: Inicie uma composteira doméstica ou procure pontos de coleta de resíduos orgânicos na sua região.</p>
+            </div>
+
+            <div class="guia-card">
+                <h2>Eletrônicos</h2>
+                <p>Equipamentos eletrônicos contêm materiais tóxicos e precisam de descarte especial:</p>
+                <ul>
+                    <li>Procure pontos de coleta específicos para eletrônicos</li>
+                    <li>Nunca descarte no lixo comum ou queime</li>
+                    <li>Guarde acessórios e manuais junto ao equipamento</li>
+                    <li>Proteja dados pessoais antes do descarte</li>
+                </ul>
+                <p>Inclui: celulares, computadores, pilhas, baterias, carregadores, cabos e periféricos.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer id="rodape">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">EcoVigia</div>
+                <p>© Plataforma Comunitária de Monitoramento de Resíduos</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para o menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.menu-btn');
+            const menuNav = document.querySelector('.opcoes_nav');
+            const overlay = document.querySelector('.overlay');
+            
+            menuBtn.addEventListener('click', function() {
+                menuBtn.classList.toggle('active');
+                menuNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = menuNav.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            overlay.addEventListener('click', function() {
+                menuBtn.classList.remove('active');
+                menuNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Fechar menu ao clicar em um link
+            const navLinks = document.querySelectorAll('.opcoes_nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    menuBtn.classList.remove('active');
+                    menuNav.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 
